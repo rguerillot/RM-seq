@@ -39,7 +39,7 @@ def get_aa_from_position(sstart, send, ref):
         return str(ref.seq[int(sstart)-1:int(send)])
         
 
-def reformat_diffseq_output(diffseq_output, barcode, dict_bar_nuc, dict_bar_orf): ### fix me: check wt seq = no mutation
+def reformat_diffseq_output(diffseq_output, barcode, dict_bar_nuc, dict_bar_orf):
     if 'No hits in output report file' in diffseq_output :
         clean_lines = sample_name + "\t" + "WT" + "\t" + "None" + "\t" + "None" + "\t" +  dict_bar_nuc.get(str(barcode)) + "\t" + dict_bar_orf.get(str(barcode)) +  "\n"
         raw_lines = sample_name + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + dict_bar_nuc.get(str(barcode)) + "\t" + dict_bar_orf.get(str(barcode)) +  "\n"
@@ -155,7 +155,6 @@ def main():
 
 
         for barcode in barcode_nuc:
-
             try:
                 raw_annot = str(barcode) + "\t" +  clust_annot.get(int(barcode_cluster.get(str(barcode))))[0]
                 annot = str(barcode) + "\t" + clust_annot.get(int(barcode_cluster.get(str(barcode))))[1]

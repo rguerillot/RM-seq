@@ -189,7 +189,7 @@ sub setOptions {
     {OPT=>"minfreq=i",  VAR=>\$minfreq, DEFAULT=>5, DESC=>"Minimum barcode frequency to keep"},
     {OPT=>"cpus=i",  VAR=>\$cpus, DEFAULT=>&num_cpus(), DESC=>"Number of CPUs to use"},
 	{OPT=>"minsize=i",  VAR=>\$minsize, DEFAULT=>200, DESC=>"Minimum ORF size in bp used when annotating variants"},
-	{OPT=>"wsize=i",  VAR=>\$wsize, DEFAULT=>5, DESC=>"The similar regions between the two sequences are found by creating a hash table of 'wordsize'd subsequences. 10 is a reasonable default. Making this value larger (20) may speed up the program slightly, but will mean that any two differences within 'wordsize' of each other will be grouped as a single region of difference. This value may be made smaller (4) to improve the resolution of nearby differences, but the program will go much slower."},
+	{OPT=>"wsize=i",  VAR=>\$wsize, DEFAULT=>5, DESC=>"Word-size option to pass to diffseq for comparison with reference sequence"},
     {OPT=>"subsample=i",  VAR=>\$subsample, DEFAULT=>0, DESC=>"Only examine this many reads"},
     {OPT=>"keepfiles!",  VAR=>\$keepfiles, DEFAULT=>0, DESC=>"Do not delete intermediate files"},
   );
