@@ -1,9 +1,9 @@
-# AMR-seq
+# RM-seq
 
 # Usage
 
 ```
-AMR-seq.pl [options] --R1 R1.fq.gz --R2 R2.fq.gz --refnuc FASTA --refprot FASTA --outdir DIR --barlen NN
+RM-seq.pl [options] --R1 R1.fq.gz --R2 R2.fq.gz --refnuc FASTA --refprot FASTA --outdir DIR --barlen NN
   --help          This help.
   --debug!        Debug info (default '0').
   --R1=s          Read 1 FASTQ (default '').
