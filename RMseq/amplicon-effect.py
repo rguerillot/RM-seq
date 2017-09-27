@@ -1,4 +1,21 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
+'''
+    Uses python3.
+    email: romain.guerillot@unimelb.edu.au
+    Authors: Romain Guerillot, Torsten Seemann, Mark B. Schultz
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 from plumbum import local
 from plumbum.cmd import getorf, diffseq, grep, rm
 from Bio.Seq import Seq
@@ -86,8 +103,8 @@ def get_barcode_fasta(my_fasta):
 def get_cluster_annot(barcode_cluster_dict, dict_bar_nuc, dict_bar_orf):
         fasta_sequences = SeqIO.parse(open(outfolder + "/amplicons.orf"),'fasta')
         nb_fa_records = len(list(SeqIO.parse(open(outfolder + "/amplicons.orf"),'fasta')))
-        print "running: diffseq"
-        print "processing " + str(nb_fa_records)+ " unique orf"
+        print("running: diffseq")
+        print("processing " + str(nb_fa_records)+ " unique orf")
         bar = progressbar.ProgressBar(maxval=nb_fa_records, widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
         counter = 0
         cluster_number = 0
@@ -109,23 +126,23 @@ def get_cluster_annot(barcode_cluster_dict, dict_bar_nuc, dict_bar_orf):
         return dict_cluster_annot
         
 def main():
-        print "multi-fasta file: " + args.mfasta
-        print "reference file: " + args.ref
-        print "output directory: " + args.outdir
-        print "sample name: " + args.name
-        print "keeping ORF: >= " + args.filter + "bp"
+        print("multi-fasta file: " + args.mfasta)
+        print("reference file: " + args.ref)
+        print("output directory: " + args.outdir)
+        print("sample name: " + args.name)
+        print("keeping ORF: >= " + args.filter + "bp")
 
         # create outputdir if it doesn't exit
         if not os.path.exists(outfolder):
             os.makedirs(outfolder)
 
         # run cd-hit-est to cluster identical amplicons
-        print "running cd-hit to cluster identical amplicons"
+        print("running cd-hit to cluster identical amplicons")
         cdhit = subprocess.call(["cd-hit-est", "-bak", "1", "-c", "1", "-G", "0", "-aL", "1", "-i", conseq_file, "-o", outfolder + "/amplicons.cdhit"])
 
         # run EMBOSS getORF to find the largest ORF of each conseq
         get_ORF = getorf["-sequence", outfolder + "/amplicons.cdhit", "-outseq", outfolder + "/amplicons.orf", "-table", "11", "-minsize", ORFminsize, "-reverse", "FALSE"]
-        print "running: ", get_ORF
+        print("running: ", get_ORF)
         get_ORF()
             
         # get dictionnary of cluster, orf and nucleotide
@@ -142,16 +159,16 @@ def main():
         clust_annot = get_cluster_annot(barcode_cluster, barcode_orf, barcode_nuc)
 
         # write annotation files
-        print "writing annotation files"
+        print("writing annotation files")
         out_raw_table = open(outfolder+"/amplicons_raw.effect", "a") #warning appending to file'
         out_raw_table.write("barcode" + "\t" + "sample" + "\t" +  "Start" + "\t" + "End" + "\t" + "Score" + "\t" + "Strand" + "\t" + "start" + "\t" + "end" + "\t" + "length" + "\t" + "name" + "\t" + "sequence" + "\t" + "first_feature" + "\t" + "second_feature" + "\t" + "orf" + "\t" + "dna" + "\n")
         out_table = open(outfolder+"/amplicons.effect", "a") #warning appending to file
         out_table.write("barcode" + "\t" + "sample" + "\t" + "aa_mutation" + "\t" + "start" + "\t" + " end" + "\t" + "orf" + "\t" + "dna" + "\n")
 
-        print "# consensus amplicons = " + str(len(barcode_nuc))
-        print "# non-identical consensus amplicons = " + str(len(set(barcode_cluster.values())))
-        print "# non-identical consensus amplicons translated = " + str(len(barcode_orf))
-        print "# non-identical orf annotated = " + str(len(clust_annot))
+        print("# consensus amplicons = " + str(len(barcode_nuc)))
+        print("# non-identical consensus amplicons = " + str(len(set(barcode_cluster.values()))))
+        print("# non-identical consensus amplicons translated = " + str(len(barcode_orf)))
+        print("# non-identical orf annotated = " + str(len(clust_annot)))
 
 
         for barcode in barcode_nuc:
