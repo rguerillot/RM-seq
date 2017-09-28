@@ -43,6 +43,7 @@ brew install pear
 brew install cd-hit
 brew install trimmomatic
 pip3 install plumbum
+pip3 install biopython
 ```
 
 ## Usage
