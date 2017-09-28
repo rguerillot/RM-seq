@@ -121,6 +121,11 @@ amplicons.orf | Multifasta file containing all the consensus protein sequences (
 amplicons.barcodes | Table with the count of each barcode sequence
 amplicons.cdhit | Multifasta file containing all the unique consensus nucleotide sequences (header of sequence is the barcode)
 
+To quickly count the number mutation in the sample you can do :
+```
+cut -f3 amplicons.effect | sort | uniq -c | sort
+```
+
 ## Issues
 
 Please report problems to the [Issues Page](https://github.com/rguerillot/RM-seq/issues).
