@@ -22,7 +22,12 @@ A complete descrition of the RM-seq method will be available soon (article submi
 ```
 pip3 install rmseq
 ```
- 
+
+If installing using `pip3 install rmseq --user`
+Create symlinks to the packaged data using 
+
+    ln -s $USER/.local/lib/python3.6/site-packages/RMseq/test_data/ $USER/.local/bin/
+
 ### Dependencies
 RM-seq has the following package dependencies:
 * EMBOSS >= 6.6 for `clustalo`, `cons`, `getorf`, `diffseq`
