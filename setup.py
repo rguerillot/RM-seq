@@ -11,7 +11,7 @@ setup(
     name = 'rmseq',
     version = RMseq.__version__,
     description = RMseq.__description__,
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     classifiers = ['Development Status :: 3 - Alpha',
                    'License :: OSI Approved :: GNU Affero General ' +
                    'Public License v3 or later (AGPLv3+)',
