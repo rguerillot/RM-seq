@@ -129,8 +129,6 @@ TEST_DATA = pkg_resources.resource_filename(__name__,
                                             os.path \
                                             .join('test_data'))
 
-print(TEST_DATA)
-print(RMSEQ_PERL)
 # These softwares are required to run.
 SOFTWARES = ['bwa',
              'clustalo',
