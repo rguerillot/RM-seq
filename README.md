@@ -86,7 +86,7 @@ rmseq run -h
                             Only examine this many reads.
       -k, --keepfiles       Keep the intermediate files. Default is to remove
                             intermediate files
-
+```
 ## Output
 
 RM-seq produces a tap-separated output file called amplicons.effect with the following columns:
