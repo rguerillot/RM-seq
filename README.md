@@ -1,7 +1,7 @@
 # RM-seq: Resistance Mutation SEQuencing
 
 Analysis bioinformatic pipeline for high-throughput identification and quantification of large repertoires of resistance conferring mutations.
-RM-seq is an amplicon-based, deep-sequencing technique founded on the single molecule barcoding technique. We have adapted this method in order to identify and quantify mutations that confer resistance to a given antibiotic.
+RM-seq is an amplicon-based, deep-sequencing technique using single molecule barcoding. We have adapted this method in order to identify and quantify mutations that confer resistance to a given antibiotic.
 
 RM-seq allows to both correct sequenced read errors generated during sequencing and to accurately quantify mutations by correcting PCR amplification bias generated during sequencing library preparation. During the first step of amplicon library preparation, a linear PCR (primer extension) with a primer comprising a tail with degenerated bases (all possible bases) introduce a unique barcode to DNA template molecules. Therefore a barcode is assigned not just to all the molecules from a certain sample (indexing), but to all molecules being amplified and sequenced. RM-seq pipeline use these barcodes to generate an error-corrected consensus sequence of the initial template variant. Counting the barcodes indroduced before exponential amplification by PCR of the template allows to accurately quantify each genetic variants from genomic DNA extracted from complex population of resistant clones (eg. pools of 10,000 resistant colonies selected by an antibiotic in vitro).
 
@@ -9,7 +9,7 @@ A complete descrition of the RM-seq method will be available soon (article submi
 
 ## Is this the right tool for me?
 
-1. To be able to use this pipeline you need a sequenced amplicon library with molecular barcodes.
+1. To be able to us this pipeline you need to have sequenced amplicon library with molecular barcodes.
 2. It only supports paired-end FASTQ reads (including .gz compressed fastq files).
 3. It needs paired reads that are overlapping.
 3. It needs bwa aligner and EMBOSS to be installed.
@@ -19,11 +19,15 @@ A complete descrition of the RM-seq method will be available soon (article submi
 ## Installation
 
 ### Install RM-seq pipeline
-
 ```
 pip3 install rmseq
 ```
- 
+
+If installing using `pip3 install rmseq --user`
+Create symlinks to the packaged data using 
+
+    ln -s $HOME/.local/lib/python3.6/site-packages/RMseq/test_data/ $HOME/.local/bin/
+
 ### Dependencies
 RM-seq has the following package dependencies:
 * EMBOSS >= 6.6 for `clustalo`, `cons`, `getorf`, `diffseq`
@@ -34,7 +38,7 @@ RM-seq has the following package dependencies:
 * trimmomatic >= 0.36
 * python modules: `plumbum`, `Biopython`
 
-If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew.sh/) packaging system you can do:
+If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew.sh/) packaging system:
 ```
 brew tap homebrew/science
 brew tap tseemann/bioinformatics-linux
@@ -43,43 +47,59 @@ brew install samtools
 brew install pear
 brew install cd-hit
 brew install trimmomatic
-```
-
-To install the python modules you can do:
-```
 pip3 install plumbum
 pip3 install biopython
 ```
 
-## Usage
+## Quick start
 
-### Quick start
+Do
 
-```
-rmseq run <read1> <read2> <ref_fasta_nuc> <ref_fasta_prot> <outdir>
-```
+    rmseq
 
-### Get help
+### Help
 
-```
-rmseq run -h
+    usage: rmseq [-h]  ...
+
+    Run RM-seq pipeline.
+
+    optional arguments:
+      -h, --help  show this help message and exit
+
+    Commands:
+
+        run       Run the pipeline.
+        version   Print version.
+        check     Check pipeline dependencies
+        test      Run the test data set.
+
+### To check dependencies are installed
+
+    rmseq check
+
+### To run the test dataset
+
+    rmseq test
+
+### To run analysis pipeline, follow the steps in
+
+    rmseq run -h
     usage: rmseq run [options]
 
     Run the pipeline
 
+    positional arguments:
+      R1                    Path to read pair 1
+      R2                    Path to read pair 2
+      refnuc                Reference gene that will be used for premapping
+                            filtering (fasta).
+      refprot               Reference protein that will be use for annotating
+                            variants (fasta).
+      outdir                Output directory.
+
     optional arguments:
       -h, --help            show this help message and exit
       -d, --debug_on        Switch on debug mode.
-      -1 R1, --R1 R1        Path to read pair 1
-      -2 R2, --R2 R2        Path to read pair 2
-      -n REFNUC, --refnuc REFNUC
-                            Reference gene that will be used for premapping
-                            filtering (fasta).
-      -p REFPROT, --refprot REFPROT
-                            Reference protein that will be use for annotating
-                            variants (fasta).
-      -o OUTDIR, --outdir OUTDIR
-                            Output directory.
       -f, --force           Force overwite of existing.
       -b BARLEN, --barlen BARLEN
                             Length of barcode (default 16)
@@ -96,7 +116,10 @@ rmseq run -h
                             Only examine this many reads.
       -k, --keepfiles       Keep the intermediate files. Default is to remove
                             intermediate files
-```
+
+### To check the version
+
+    rmseq version
 
 ## Outputs
 
@@ -116,21 +139,16 @@ The other files produced by RM-seq are:
 
 File name | Description
 ----------|------------
-amplicons.nuc | Multifasta file containing all the consensus nucleotide sequences (header of sequence is the barcode)
-amplicons.orf | Multifasta file containing all the consensus protein sequences (header of sequence is the barcode)
+amplicons.nuc | Multifasta file containing all the consensus nucleotide sequence (header of sequence is the barcode)
+amplicons.orf | Multifasta file containing all the consensus protein sequence (header of sequence is the barcode)
 amplicons.barcodes | Table with the count of each barcode sequence
-amplicons.cdhit | Multifasta file containing all the unique consensus nucleotide sequences (header of sequence is the barcode)
+amplicons.cdhit | Multifasta file containing all the unique consensus nucleotide sequence (header of sequence is the barcode)
 
-To quickly count the number of the different mutations in the sample you can do :
-```
-cut -f3 amplicons.effect | sort | uniq -c | sort
-```
 
 ## Issues
 
 Please report problems to the [Issues Page](https://github.com/rguerillot/RM-seq/issues).
 
-## Authors
+## Author
 
-Romain Guerillot | Torsten Seemann | Mark Schultz
-
+Romain Guerillot | Torsten Seemann | Mark B Schultz (github: schultzm)
