@@ -3,3 +3,4 @@ rmseq.egg-info
 RMseq/__pycache__
 dist
 README
+register.py
