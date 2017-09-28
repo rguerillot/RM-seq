@@ -14,7 +14,7 @@ sub natatime ($@)
     }
 }
 
-my(@Options, $debug, $R1, $R2, $barlen, $outdir, $refnuc, $refprot, $minfreq, $force, $cpus, $minsize, $wsize, $subsample, $keepfiles);
+my(@Options, $debug, $R1, $R2, $barlen, $outdir, $basequal, $refnuc, $refprot, $minfreq, $force, $cpus, $minsize, $wsize, $subsample, $keepfiles);
 setOptions();
 
 # Options
@@ -35,10 +35,16 @@ if (-d $outdir) {
 }
 make_path($outdir);
 
-# Filter in reads that map on reference
+# Trim read from 3' end if base quality below threshold
+msg("Trimming end of reads with if base quality below $basequal");
+run_cmd("trimmomatic PE -threads $cpus -phred33 \Q$R1\E \Q$R2\E $outdir/trimmed-R1.fq $outdir/trimmed-R1-unpaired.fq $outdir/trimmed-R2.fq $outdir/trimmed-R2-unpaired.fq TRAILING:$basequal > /dev/null 2>&1");
+run_cmd("rm $outdir/trimmed-R1-unpaired.fq");
+run_cmd("rm $outdir/trimmed-R2-unpaired.fq");
+
+# Keep reads that map on reference
 msg("Filtering reads mapping on reference");
 run_cmd("bwa index $refnuc");
-run_cmd("bwa mem -t $cpus $refnuc \Q$R1\E \Q$R2\E > $outdir/out.sam");
+run_cmd("bwa mem -t $cpus $refnuc $outdir/trimmed-R1.fq $outdir/trimmed-R2.fq > $outdir/out.sam");
 run_cmd("samtools view -Sb $outdir/out.sam > $outdir/out.bam");
 run_cmd("samtools view -b -f 0x2 $outdir/out.bam > $outdir/mapped.bam");
 run_cmd("bamToFastq -i $outdir/mapped.bam -fq $outdir/mapped_reads_R1.fq -fq2 $outdir/mapped_reads_R2.fq");
@@ -48,7 +54,7 @@ run_cmd("rm $outdir/mapped.bam");
 
 # Overlap reads
 msg("Overlapping reads with 'pear'");
-run_cmd("pear -u 0 -v 100 -j $cpus -f $outdir/mapped_reads_R1.fq -r $outdir/mapped_reads_R2.fq -o $outdir/reads");
+run_cmd("pear -u 0 -v 20 -j $cpus -f $outdir/mapped_reads_R1.fq -r $outdir/mapped_reads_R2.fq -o $outdir/reads");
 run_cmd("rm $outdir/mapped_reads_R1.fq");
 run_cmd("rm $outdir/mapped_reads_R2.fq");
 
@@ -119,15 +125,16 @@ print STDERR "\nOK\n";
 
 # Combining
 msg("Combining consensus sequences");
-run_cmd("cat \Q$outdir\E/*A.cns > \Q$outdir/ampliconsA.fsa\E");
-run_cmd("cat \Q$outdir\E/*T.cns > \Q$outdir/ampliconsT.fsa\E");
-run_cmd("cat \Q$outdir\E/*C.cns > \Q$outdir/ampliconsC.fsa\E");
-run_cmd("cat \Q$outdir\E/*G.cns > \Q$outdir/ampliconsG.fsa\E");
-run_cmd("cat \Q$outdir\E/amplicons*.fsa > \Q$outdir/amplicons.nuc\E");
-run_cmd("rm \Q$outdir\E/ampliconsA.fsa\E");
-run_cmd("rm \Q$outdir\E/ampliconsT.fsa\E");
-run_cmd("rm \Q$outdir\E/ampliconsC.fsa\E");
-run_cmd("rm \Q$outdir\E/ampliconsG.fsa\E");
+run_cmd("find $outdir -maxdepth 1 -name *.cns -print0 | xargs -0 cat > \Q$outdir\E/amplicons.nuc\E");
+#run_cmd("cat \Q$outdir\E/*A.cns > \Q$outdir/ampliconsA.fsa\E");
+#run_cmd("cat \Q$outdir\E/*T.cns > \Q$outdir/ampliconsT.fsa\E");
+#run_cmd("cat \Q$outdir\E/*C.cns > \Q$outdir/ampliconsC.fsa\E");
+#run_cmd("cat \Q$outdir\E/*G.cns > \Q$outdir/ampliconsG.fsa\E");
+#run_cmd("cat \Q$outdir\E/amplicons*.fsa > \Q$outdir/amplicons.nuc\E");
+#run_cmd("rm \Q$outdir\E/ampliconsA.fsa\E");
+#run_cmd("rm \Q$outdir\E/ampliconsT.fsa\E");
+#run_cmd("rm \Q$outdir\E/ampliconsC.fsa\E");
+#run_cmd("rm \Q$outdir\E/ampliconsG.fsa\E");
 
 # Cleanup
 unless ($keepfiles) {
@@ -187,6 +194,7 @@ sub setOptions {
     {OPT=>"force!",  VAR=>\$force, DEFAULT=>0, DESC=>"Force overwite of existing"},
     {OPT=>"barlen=i",  VAR=>\$barlen, DEFAULT=>16, DESC=>"Length of barcode"},
     {OPT=>"minfreq=i",  VAR=>\$minfreq, DEFAULT=>5, DESC=>"Minimum barcode frequency to keep"},
+    {OPT=>"basequal=i",  VAR=>\$basequal, DEFAULT=>30, DESC=>"Minimum base quality threshold used for trimming the end of reads (trimmomatic TRAILING argument)"},
     {OPT=>"cpus=i",  VAR=>\$cpus, DEFAULT=>&num_cpus(), DESC=>"Number of CPUs to use"},
 	{OPT=>"minsize=i",  VAR=>\$minsize, DEFAULT=>200, DESC=>"Minimum ORF size in bp used when annotating variants"},
 	{OPT=>"wsize=i",  VAR=>\$wsize, DEFAULT=>5, DESC=>"Word-size option to pass to diffseq for comparison with reference sequence"},

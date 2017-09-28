@@ -97,10 +97,10 @@ def version():
     '''
     VERSION = '\nRM-seq version: ' + __version__ +\
               '\nVersion date: ' + __version_date__ +\
-              '\nauthors: '+ __author__ +\
+              '\nAuthors: '+ __author__ +\
               '\nCorresponding author email: '+ __author_email__ +\
-              '\ngithub: ' + __github_username__ +\
-              '\ndownload url: ' + __download_url__ +'\n'
+              '\nGithub: ' + __github_username__ +\
+              '\nDownload url: ' + __download_url__ +'\n'
     return VERSION
 
 

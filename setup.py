@@ -2,17 +2,23 @@ from setuptools import setup
 import RMseq
 import os
 
-def read(fname):
-    '''
-    Read the README
-    '''
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+long_description = 'RM-seq is a bioinformatics tool for for ' +\
+                   'assessing resistance mutations from PE short-reads.'
+if os.path.exists('README.txt'):
+    long_description = open('README.txt').read()
+# 
+# 
+# def read(fname):
+#     '''
+#     Read the README
+#     '''
+#     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name = 'rmseq',
     version = RMseq.__version__,
     description = RMseq.__description__,
-    long_description=read('README'),
+    long_description=long_description,
     classifiers = ['Development Status :: 3 - Alpha',
                    'License :: OSI Approved :: GNU Affero General ' +
                    'Public License v3 or later (AGPLv3+)',

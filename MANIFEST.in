@@ -3,4 +3,3 @@ setup.py
 RMseq/__init__.py
 RMseq/rmseq
 RMseq/RM-seq.pl
-#graft Pandoo/qacGenes
