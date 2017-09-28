@@ -31,6 +31,7 @@ Create symlinks to the packaged data using
 ### Dependencies
 RM-seq has the following package dependencies:
 * EMBOSS >= 6.6 for `clustalo`, `cons`, `getorf`, `diffseq`
+* clustal-omega >= 1.2.1
 * bwa >= 0.7.15
 * samtools >= 1.3
 * pear >= 0.9.10
@@ -43,6 +44,7 @@ If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew
 brew tap homebrew/science
 brew tap tseemann/bioinformatics-linux
 brew install EMBOSS
+brew install clustal-omega
 brew install bwa
 brew install samtools
 brew install pear
