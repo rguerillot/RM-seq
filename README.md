@@ -1,4 +1,4 @@
-# RM-seq: __R__esistance __M__utation __SEQ__uencing
+# RM-seq: Resistance Mutation SEQuencing
 
 Analysis bioinformatic pipeline for high-throughput identification and quantification of large repertoires of resistance conferring mutations.
 RM-seq is an amplicon-based, deep-sequencing technique using single molecule barcoding. We have adapted this method in order to identify and quantify mutations that confer resistance to a given antibiotic.
