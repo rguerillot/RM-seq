@@ -26,7 +26,7 @@ pip3 install rmseq
 If installing using `pip3 install rmseq --user`
 Create symlinks to the packaged data using 
 
-    ln -s $USER/.local/lib/python3.6/site-packages/RMseq/test_data/ $USER/.local/bin/
+    ln -s $HOME/.local/lib/python3.6/site-packages/RMseq/test_data/ $HOME/.local/bin/
 
 ### Dependencies
 RM-seq has the following package dependencies:
