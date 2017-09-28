@@ -9,7 +9,7 @@ A complete descrition of the RM-seq method will be available soon (article submi
 
 ## Is this the right tool for me?
 
-1. To be able to us this pipeline you need to have sequenced amplicon library with molecular barcodes.
+1. To be able to use this pipeline you need a sequenced amplicon library with molecular barcodes.
 2. It only supports paired-end FASTQ reads (including .gz compressed fastq files).
 3. It needs paired reads that are overlapping.
 3. It needs bwa aligner and EMBOSS to be installed.
@@ -19,6 +19,7 @@ A complete descrition of the RM-seq method will be available soon (article submi
 ## Installation
 
 ### Install RM-seq pipeline
+
 ```
 pip3 install rmseq
 ```
@@ -33,7 +34,7 @@ RM-seq has the following package dependencies:
 * trimmomatic >= 0.36
 * python modules: `plumbum`, `Biopython`
 
-If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew.sh/) packaging system:
+If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew.sh/) packaging system you can do:
 ```
 brew tap homebrew/science
 brew tap tseemann/bioinformatics-linux
@@ -42,6 +43,10 @@ brew install samtools
 brew install pear
 brew install cd-hit
 brew install trimmomatic
+```
+
+To install the python modules you can do:
+```
 pip3 install plumbum
 pip3 install biopython
 ```
@@ -49,11 +54,13 @@ pip3 install biopython
 ## Usage
 
 ### Quick start
+
 ```
-rmseq run -1 <read1> -2 <read2> -n <ref_fasta_nuc> -p <ref_fasta_prot> -o <outdir>
+rmseq run <read1> <read2> <ref_fasta_nuc> <ref_fasta_prot> <outdir>
 ```
 
 ### Get help
+
 ```
 rmseq run -h
     usage: rmseq run [options]
@@ -90,6 +97,7 @@ rmseq run -h
       -k, --keepfiles       Keep the intermediate files. Default is to remove
                             intermediate files
 ```
+
 ## Outputs
 
 RM-seq produces a tap-separated output file called amplicons.effect with the following columns:
@@ -108,17 +116,16 @@ The other files produced by RM-seq are:
 
 File name | Description
 ----------|------------
-amplicons.nuc | Multifasta file containing all the consensus nucleotide sequence (header of sequence is the barcode)
-amplicons.orf | Multifasta file containing all the consensus protein sequence (header of sequence is the barcode)
+amplicons.nuc | Multifasta file containing all the consensus nucleotide sequences (header of sequence is the barcode)
+amplicons.orf | Multifasta file containing all the consensus protein sequences (header of sequence is the barcode)
 amplicons.barcodes | Table with the count of each barcode sequence
-amplicons.cdhit | Multifasta file containing all the unique consensus nucleotide sequence (header of sequence is the barcode)
-
+amplicons.cdhit | Multifasta file containing all the unique consensus nucleotide sequences (header of sequence is the barcode)
 
 ## Issues
 
 Please report problems to the [Issues Page](https://github.com/rguerillot/RM-seq/issues).
 
-## Author
+## Authors
 
 Romain Guerillot | Torsten Seemann | Mark Schultz
 
