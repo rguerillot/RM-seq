@@ -3,9 +3,7 @@ import RMseq
 import os
 
 
-LONG_DESCRIPTION = 'RM-seq is a bioinformatics tool for for ' +\
-                   'assessing resistance mutations from PE short-reads.  ' +\
-                   'Given a set of paired-end reads, a reference sequence ' +\
+LONG_DESCRIPTION = 'Given a set of paired-end reads, a reference sequence ' +\
                    'and a reference protein (both in .fasta format), map ' +\
                    'the reads to the reference and determine the pool ' +\
                    'of mutated alleles in the short reads.'

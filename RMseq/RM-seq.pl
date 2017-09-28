@@ -145,7 +145,7 @@ unless ($keepfiles) {
 
 # Annotate variant effect
 msg("Annotating mutations effect");
-run_cmd("amplicon-effect.py -n \Q$outdir\E -f \Q$minsize\E -w \Q$wsize\E \Q$outdir/amplicons.nuc\E \Q$refprot\E \Q$outdir\E");
+# run_cmd("amplicon-effect.py -n \Q$outdir\E -f \Q$minsize\E -w \Q$wsize\E \Q$outdir/amplicons.nuc\E \Q$refprot\E \Q$outdir\E");
 
 msg("Results in $outdir/amplicons.*");
 run_cmd("find $outdir -type f");
@@ -188,16 +188,16 @@ sub setOptions {
     {OPT=>"debug!",  VAR=>\$debug, DEFAULT=>0, DESC=>"Debug info"},
     {OPT=>"R1=s",  VAR=>\$R1, DEFAULT=>'', DESC=>"Read 1 FASTQ"},
     {OPT=>"R2=s",  VAR=>\$R2, DEFAULT=>'', DESC=>"Read 2 FASTQ"},
-	{OPT=>"refnuc=s",  VAR=>\$refnuc, DEFAULT=>'', DESC=>"Reference gene that will be used for premapping filtering (fasta)"},
-	{OPT=>"refprot=s",  VAR=>\$refprot, DEFAULT=>'', DESC=>"Reference protein that will be use for annotating variants (fasta)"},
+    {OPT=>"refnuc=s",  VAR=>\$refnuc, DEFAULT=>'', DESC=>"Reference gene that will be used for premapping filtering (fasta)"},
+    {OPT=>"refprot=s",  VAR=>\$refprot, DEFAULT=>'', DESC=>"Reference protein that will be use for annotating variants (fasta)"},
     {OPT=>"outdir=s",  VAR=>\$outdir, DEFAULT=>'', DESC=>"Output folder"},
     {OPT=>"force!",  VAR=>\$force, DEFAULT=>0, DESC=>"Force overwite of existing"},
     {OPT=>"barlen=i",  VAR=>\$barlen, DEFAULT=>16, DESC=>"Length of barcode"},
     {OPT=>"minfreq=i",  VAR=>\$minfreq, DEFAULT=>5, DESC=>"Minimum barcode frequency to keep"},
     {OPT=>"basequal=i",  VAR=>\$basequal, DEFAULT=>30, DESC=>"Minimum base quality threshold used for trimming the end of reads (trimmomatic TRAILING argument)"},
     {OPT=>"cpus=i",  VAR=>\$cpus, DEFAULT=>&num_cpus(), DESC=>"Number of CPUs to use"},
-	{OPT=>"minsize=i",  VAR=>\$minsize, DEFAULT=>200, DESC=>"Minimum ORF size in bp used when annotating variants"},
-	{OPT=>"wsize=i",  VAR=>\$wsize, DEFAULT=>5, DESC=>"Word-size option to pass to diffseq for comparison with reference sequence"},
+    {OPT=>"minsize=i",  VAR=>\$minsize, DEFAULT=>200, DESC=>"Minimum ORF size in bp used when annotating variants"},
+    {OPT=>"wsize=i",  VAR=>\$wsize, DEFAULT=>5, DESC=>"Word-size option to pass to diffseq for comparison with reference sequence"},
     {OPT=>"subsample=i",  VAR=>\$subsample, DEFAULT=>0, DESC=>"Only examine this many reads"},
     {OPT=>"keepfiles!",  VAR=>\$keepfiles, DEFAULT=>0, DESC=>"Do not delete intermediate files"},
   );

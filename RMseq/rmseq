@@ -17,46 +17,47 @@
 '''
 
 from multiprocessing import cpu_count
+from datetime import datetime
 import argparse
 import os
+import shutil
 import sys
-from RMseq.__init__ import (__version__,
-                            __version_date__,
-                            __author__,
-                            __author_email__,
-                            __github_username__,
-                            __download_url__)
+from RMseq import (__version__,
+                   __version_date__,
+                   __author__,
+                   __author_email__,
+                   __github_username__,
+                   __download_url__)
+import pkg_resources
 
+STARTTIME = datetime.now()
 
 PARSER = argparse.ArgumentParser(description='Run RM-seq pipeline.')
 
 SUBPARSERS = PARSER.add_subparsers(title='Commands',
                                    help='', metavar='', dest='subparser_name')
-#---------------------------- check ------------------------------------
+#---------------------------- version ------------------------------------
 SUBPARSER_VERSION = SUBPARSERS.add_parser('version', help='Print version.',
-                                        usage='pandoo version',
-                                        description='Print the pipeline ' +\
+                                          usage='rmseq version',
+                                          description='Print the pipeline ' +\
                                                     'version')
+
+#-----------------------------run-----------------------------------------
 SUBPARSER_RUN = SUBPARSERS.add_parser('run', help='Run the pipeline.',
-                                        usage='pandoo run [options]',
-                                        description='Run the pipeline')
+                                      usage='rmseq run [options]',
+                                      description='Run the pipeline')
 
 SUBPARSER_RUN.add_argument('-d', '--debug_on', help='Switch on debug mode.',
                            action='store_true', default=False, required=False)
-SUBPARSER_RUN.add_argument('-1', '--R1', help='Path to read pair 1',
-                           required=True)
-SUBPARSER_RUN.add_argument('-2', '--R2', help='Path to read pair 2',
-                           required=True)
-SUBPARSER_RUN.add_argument('-n', '--refnuc',
+SUBPARSER_RUN.add_argument('R1', help='Path to read pair 1')
+SUBPARSER_RUN.add_argument('R2', help='Path to read pair 2')
+SUBPARSER_RUN.add_argument('refnuc',
                            help='Reference gene that will be used for ' +\
-                                'premapping filtering (fasta).',
-                           required=True)
-SUBPARSER_RUN.add_argument('-p', '--refprot',
+                                'premapping filtering (fasta).')
+SUBPARSER_RUN.add_argument('refprot',
                            help='Reference protein that will be use for ' +\
-                                'annotating variants (fasta).',
-                           required=True)
-SUBPARSER_RUN.add_argument('-o', '--outdir', help='Output directory.',
-                           required=True)
+                                'annotating variants (fasta).')
+SUBPARSER_RUN.add_argument('outdir', help='Output directory.',)
 SUBPARSER_RUN.add_argument('-f', '--force', help='Force overwite of existing.',
                            action='store_true', default=False, required=False)
 SUBPARSER_RUN.add_argument('-b', '--barlen',
@@ -83,10 +84,23 @@ SUBPARSER_RUN.add_argument('-s', '--subsample',
                            help='Only examine this many reads.',
                            default=None, type=int, required=False)
 SUBPARSER_RUN.add_argument('-k', '--keepfiles',
-                           help='Do not delete intermediate files.',
+                           help='Keep the intermediate files.  Default is ' +\
+                                'to remove intermediate files',
                            action='store_true', default=False, required=False)
-SUBPARSER_VERSION.add_argument('-v', '--version', action='store_true',
-                               help='Print version and exit.', default=False)
+
+#------------------------------------test--------------------------------------
+SUBPARSER_TEST = SUBPARSERS.add_parser('test', help='Run the test data set.',
+                                          usage='rmseq test',
+                                          description='Run the test')
+
+#---------------------------- check -------------------------------------------
+SUBPARSER_CHECK = SUBPARSERS.add_parser('check', help='Check pipeline \
+                                        dependencies',
+                                        usage='rmseq check [options]',
+                                        description='Check if the pipeline \
+                                        softwares are in the path and \
+                                        executable.')
+
 
 ARGS = PARSER.parse_args()
 
@@ -95,13 +109,36 @@ def version():
     '''
     Print version information.
     '''
-    VERSION = '\nRM-seq version: ' + __version__ +\
+    vrsn = '\nRM-seq version: ' + __version__ +\
               '\nVersion date: ' + __version_date__ +\
               '\nAuthors: '+ __author__ +\
               '\nCorresponding author email: '+ __author_email__ +\
               '\nGithub: ' + __github_username__ +\
               '\nDownload url: ' + __download_url__ +'\n'
-    return VERSION
+    return vrsn
+
+
+RMSEQ_PERL = pkg_resources.resource_filename(__name__,
+                                             os.path \
+                                             .join('RM-seq.pl'))
+AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
+                                                  os.path \
+                                                  .join('amplicon-effect.py'))
+TEST_DATA = pkg_resources.resource_filename(__name__,
+                                            os.path \
+                                            .join('test_data'))
+
+# These softwares are required to run.
+SOFTWARES = ['bwa',
+             'clustalo',
+             'cons',
+             'getorf',
+             'diffseq',
+             'samtools',
+             'pear',
+             'cd-hit',
+             'trimmomatic']
+
 
 
 def main():
@@ -125,7 +162,7 @@ def main():
     else:
         subsample = ''
 
-    cmd = './RM-seq.pl'+debug+keepfiles+force +\
+    cmd = RMSEQ_PERL+debug+keepfiles+force +\
           ' --R1 ' +\
           os.path.abspath(ARGS.R1) +\
           ' --R2 ' +\
@@ -150,10 +187,61 @@ def main():
 
     os.system(cmd)
 
+    cmd = AMPLICON_EFFECT +\
+          ' -n '+os.path.basename(os.path.abspath(ARGS.outdir)) +\
+          ' -f '+str(ARGS.minsize) +\
+          ' -w '+str(ARGS.wsize) +\
+          ' '+os.path.join(os.path.abspath(ARGS.outdir), 'amplicons.nuc') +\
+          ' '+os.path.abspath(ARGS.refprot) +\
+          ' '+os.path.abspath(ARGS.outdir)
+    os.system(cmd)
+
+def test():
+    '''
+    Run the test dataset.
+    '''
+    cmd = RMSEQ_PERL+' --R1 '+os.path.join(TEST_DATA, 'R1.fq') +\
+          ' --R2 '+os.path.join(TEST_DATA, 'R2.fq') +\
+          ' --refnuc '+os.path.join(TEST_DATA, 'rpob.fna') +\
+          ' --refprot '+os.path.join(TEST_DATA, 'RpoB.faa') +\
+          ' --outdir '+os.path.abspath('test_results')
+    print('Will now run test using the following command:', cmd)
+    os.system(cmd)
+
+
+def check_exists(cmd):
+    '''
+    Return the path of an installed package.
+    '''
+    #os.X_OK checks if the file is executable
+    return shutil.which(cmd, mode=os.X_OK)
+
+def finish_message():
+    '''
+    Print a completion message.
+    '''
+    sys.stderr.write('\nDone. Thankyou for you using ' + version() +
+                     '\nTotal runtime (HRS:MIN:SECS):' +
+                     str(datetime.now() - STARTTIME) + '\n💊\n')
+
 if __name__ == '__main__':
     if not ARGS.subparser_name:
         os.system('rmseq -h')
     if ARGS.subparser_name == 'run':
         main()
+        finish_message()
     if ARGS.subparser_name == 'version':
-        print(version())
+        version()
+    if ARGS.subparser_name == 'test':
+        test()
+        print('Test completed.')
+    if ARGS.subparser_name == 'check':
+        for software in sorted(SOFTWARES):
+            path = check_exists(software)
+            if path is not None:
+                print(software.ljust(12)+':\tok\t'+path.ljust(11),
+                      file=sys.stderr)
+            else:
+                print('Dependency '+software+' is not installed.  Refer ' +\
+                      'to README at https://pypi.python.org/pypi/Pandoo.',
+                      file=sys.stderr)

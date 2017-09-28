@@ -3,4 +3,8 @@ rmseq.egg-info
 RMseq/__pycache__
 dist
 README
-register.py
+RMseq/test_data/rpob.fna.amb
+RMseq/test_data/rpob.fna.ann
+RMseq/test_data/rpob.fna.bwt
+RMseq/test_data/rpob.fna.pac
+RMseq/test_data/rpob.fna.sa
