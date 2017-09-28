@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 __name__            = 'rmseq'
-__version__         = '0.0.5b'
+__version__         = '0.0.6b'
 __version_date__    = 'Thu 28th September, 2017'
 __description__     = 'RM-seq is a bioinformatics tool for for ' +\
                        'assessing resistance mutations from PE short-reads.'
