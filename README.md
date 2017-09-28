@@ -49,9 +49,11 @@ pip3 install biopython
 ## Quick start
 
 Do
+
     rmseq
 
 Help
+
     usage: rmseq [-h]  ...
 
     Run RM-seq pipeline.
