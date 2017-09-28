@@ -27,7 +27,9 @@ setup(
     author_email = RMseq.__author_email__,
     license = RMseq.__license__,
     packages = ['RMseq'],
-    scripts = ['RMseq/rmseq'],
+    scripts = ['RMseq/rmseq',
+               'RMseq/amplicon-effect.py',
+               'RMseq/RM-seq.pl'],
     include_package_data = True,
     package_data={'RMseq': ['test_data/*']},
     install_requires = []
