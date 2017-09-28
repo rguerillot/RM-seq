@@ -2,17 +2,18 @@ from setuptools import setup
 import RMseq
 import os
 
-long_description = 'RM-seq is a bioinformatics tool for for ' +\
-                   'assessing resistance mutations from PE short-reads.'
-if os.path.exists('README.txt'):
-    long_description = open('README.txt').read()
-# 
-# 
-# def read(fname):
-#     '''
-#     Read the README
-#     '''
-#     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+
+try:
+    import pypandoc
+    long_description = pypandoc.convert('README.md', 'rst')
+    long_description = long_description.replace("\r","")
+except OSError:
+    print("Pandoc not found. Long_description conversion failure.")
+    import io
+    # pandoc is not installed, fallback to using raw contents
+    with io.open('README.md', encoding="utf-8") as f:
+        long_description = f.read()
 
 setup(
     name = 'rmseq',

@@ -1,3 +1,18 @@
+import pandoc
+import os
+
+pandoc.core.PANDOC_PATH = '/usr/bin/pandoc'
+
+doc = pandoc.Document()
+doc.markdown = open('README.md').read()
+f = open('README.txt','w+')
+f.write(doc.rst)
+f.close()
+os.system("setup.py register")
+os.remove('README.txt')
+
+
+
 try:
     long_description = pypandoc.convert('README.md', 'rst')
     long_description = long_description.replace("\r","") # YOU  NEED THIS LINE
