@@ -1,4 +1,4 @@
-# RM-seq: Resistance Mutation SEQuencing
+# RM-seq: __R__esistance __M__utation __SEQ__uencing
 
 Analysis bioinformatic pipeline for high-throughput identification and quantification of large repertoires of resistance conferring mutations.
 RM-seq is an amplicon-based, deep-sequencing technique using single molecule barcoding. We have adapted this method in order to identify and quantify mutations that confer resistance to a given antibiotic.
@@ -42,6 +42,7 @@ If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew
 ```
 brew tap homebrew/science
 brew tap tseemann/bioinformatics-linux
+brew install EMBOSS
 brew install bwa
 brew install samtools
 brew install pear
