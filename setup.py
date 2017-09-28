@@ -29,5 +29,6 @@ setup(
     packages = ['RMseq'],
     scripts = ['RMseq/rmseq'],
     include_package_data = True,
+    package_data={'RMseq': ['test_data/*']},
     install_requires = []
     )
