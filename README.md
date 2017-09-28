@@ -2,7 +2,9 @@
 
 Analysis bioinformatic pipeline for high-throughput identification and quantification of large repertoires of resistance conferring mutations.
 RM-seq is an amplicon-based, deep-sequencing technique founded on the single molecule barcoding technique. We have adapted this method in order to identify and quantify at high-throughput, the repertoire of mutations that confer resistance to a given antibiotic.
+
 RM-seq allows to both correct sequenced read errors generated during sequencing and to accurately quantify mutations by correcting PCR amplification bias generated during sequencing library preparation. During the first step of amplicon library preparation, a linear PCR (primer extension) with a primer comprising a tail with degenerated bases (all possible bases) introduce a unique barcode to DNA template molecules. Therefore a barcode is assigned not just to all the molecules from a certain sample (indexing), but to all molecules being amplified and sequenced. RM-seq pipeline use these barcodes to generate an error-corrected consensus sequence of the initial template variant. Counting the barcodes indroduced before exponential amplification by PCR of the template allows to accurately quantify each genetic variants from genomic DNA extracted from complex population of resistant clones (eg. pools of 10,000 resistant colonies selected by an antibiotic in vitro).
+
 A complete descrition of the RM-seq method will be available soon (article submitted)
 
 ## Is this the right tool for me?
@@ -98,8 +100,8 @@ sample | Rifampicin1 | The output folder name
 aa_mutation | H481N | The annotation of the amino acid change (Histidine residue 481 substituted by Asparagine)
 start |  481 | start coordinate of the mutation 
 end | 481 | end coordinate of the mutation
-orf | VRPPDKNNRFVGLYCTLVSCVEWLAAAVVLYFCGVIVDAHVSFMSFIAIFIIAALSGLVSFIPGGFGAFDLVVLLGFKTLGVPEEKVLLMLLLYRF | the protein sequence of the consensus sequence
-dna | GGTTAGACCACCCGATAAAAACAATCGTTTTGTAGGATTGTACTGCACTTTAGTGTCGTGTGTTGAATGGTTAGCAGCTGCAGTTGTATTATATTTCTGTGGTGTAATTGTTGACGCTCATGTATCATTCATGTCCTTTATTGCAATATTTATCATTGCTGCATTATCAGGTTTAGTCAGCTTTATTCCTGGTGGTTTCGGCGCTTTCGATTTAGTTGTATTACTAGGATTTAAAACTTTAGGTGTCCCTGAGGAAAAAGTATTATTAAT | The dna sequence of the consensus sequence
+orf | VRPPDKNNRFVGLYCTLV... | the protein sequence of the consensus sequence
+dna | GGTTAGACCACCCGATAA... | The dna sequence of the consensus sequence
 
 The other files produced by RM-seq are:
 
