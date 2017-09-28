@@ -52,7 +52,7 @@ Do
 
     rmseq
 
-Help
+### Help
 
     usage: rmseq [-h]  ...
 
@@ -62,25 +62,21 @@ Help
       -h, --help  show this help message and exit
 
     Commands:
-  
-        version   Print version.
-        run       Run the pipeline.
-        test      Run the test data set.
-        check     Check pipeline dependencies
 
-To check dependencies are installed
+        run       Run the pipeline.
+        version   Print version.
+        check     Check pipeline dependencies
+        test      Run the test data set.
+
+### To check dependencies are installed
 
     rmseq check
 
-To run the test dataset
+### To run the test dataset
 
     rmseq test
 
-To check the version
-
-    rmseq version
-
-To run analysis pipeline, follow the steps in
+### To run analysis pipeline, follow the steps in
 
     rmseq run -h
     usage: rmseq run [options]
@@ -115,6 +111,10 @@ To run analysis pipeline, follow the steps in
                             Only examine this many reads.
       -k, --keepfiles       Keep the intermediate files. Default is to remove
                             intermediate files
+
+### To check the version
+
+    rmseq version
 
 ## Outputs
 

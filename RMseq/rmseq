@@ -36,11 +36,6 @@ PARSER = argparse.ArgumentParser(description='Run RM-seq pipeline.')
 
 SUBPARSERS = PARSER.add_subparsers(title='Commands',
                                    help='', metavar='', dest='subparser_name')
-#---------------------------- version ------------------------------------
-SUBPARSER_VERSION = SUBPARSERS.add_parser('version', help='Print version.',
-                                          usage='rmseq version',
-                                          description='Print the pipeline ' +\
-                                                    'version')
 
 #-----------------------------run-----------------------------------------
 SUBPARSER_RUN = SUBPARSERS.add_parser('run', help='Run the pipeline.',
@@ -88,10 +83,11 @@ SUBPARSER_RUN.add_argument('-k', '--keepfiles',
                                 'to remove intermediate files',
                            action='store_true', default=False, required=False)
 
-#------------------------------------test--------------------------------------
-SUBPARSER_TEST = SUBPARSERS.add_parser('test', help='Run the test data set.',
-                                          usage='rmseq test',
-                                          description='Run the test')
+#---------------------------- version ------------------------------------
+SUBPARSER_VERSION = SUBPARSERS.add_parser('version', help='Print version.',
+                                          usage='rmseq version',
+                                          description='Print the pipeline ' +\
+                                                    'version')
 
 #---------------------------- check -------------------------------------------
 SUBPARSER_CHECK = SUBPARSERS.add_parser('check', help='Check pipeline \
@@ -100,6 +96,11 @@ SUBPARSER_CHECK = SUBPARSERS.add_parser('check', help='Check pipeline \
                                         description='Check if the pipeline \
                                         softwares are in the path and \
                                         executable.')
+
+#------------------------------------test--------------------------------------
+SUBPARSER_TEST = SUBPARSERS.add_parser('test', help='Run the test data set.',
+                                          usage='rmseq test',
+                                          description='Run the test')
 
 
 ARGS = PARSER.parse_args()
