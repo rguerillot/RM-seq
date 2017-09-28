@@ -1,7 +1,7 @@
 # RM-seq: Resistance Mutation SEQuencing
 
 Analysis bioinformatic pipeline for high-throughput identification and quantification of large repertoires of resistance conferring mutations.
-RM-seq is an amplicon-based, deep-sequencing technique founded on the single molecule barcoding technique. We have adapted this method in order to identify and quantify at high-throughput, the repertoire of mutations that confer resistance to a given antibiotic.
+RM-seq is an amplicon-based, deep-sequencing technique founded on the single molecule barcoding technique. We have adapted this method in order to identify and quantify mutations that confer resistance to a given antibiotic.
 
 RM-seq allows to both correct sequenced read errors generated during sequencing and to accurately quantify mutations by correcting PCR amplification bias generated during sequencing library preparation. During the first step of amplicon library preparation, a linear PCR (primer extension) with a primer comprising a tail with degenerated bases (all possible bases) introduce a unique barcode to DNA template molecules. Therefore a barcode is assigned not just to all the molecules from a certain sample (indexing), but to all molecules being amplified and sequenced. RM-seq pipeline use these barcodes to generate an error-corrected consensus sequence of the initial template variant. Counting the barcodes indroduced before exponential amplification by PCR of the template allows to accurately quantify each genetic variants from genomic DNA extracted from complex population of resistant clones (eg. pools of 10,000 resistant colonies selected by an antibiotic in vitro).
 
