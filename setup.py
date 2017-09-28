@@ -30,7 +30,7 @@ setup(
     scripts = ['RMseq/rmseq',
                'RMseq/amplicon-effect.py',
                'RMseq/RM-seq.pl'],
-    package_data={'RMseq': ['RMseq/test_data/R1.fq',
+    package_data={'rmseq': ['RMseq/test_data/R1.fq',
                             'RMseq/test_data/R2.fq',
                             'RMseq/test_data/RpoB.faa',
                             'RMseq/test_data/rpob.fna']},
