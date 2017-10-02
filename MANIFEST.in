@@ -1,1 +1,4 @@
-include RMseq/test_data/*
+include RMseq/test_data/R1.fq
+include RMseq/test_data/R2.fq
+include RMseq/test_data/RpoB.faa
+include RMseq/test_data/rpob.fna
