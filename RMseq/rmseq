@@ -123,18 +123,7 @@ RMSEQ_PERL = pkg_resources.resource_filename(__name__,
 AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
                                                   os.path \
                                                   .join('amplicon-effect.py'))
-# def get_test_data_location():
-#     try:
-#         return getusersitepackages
-
-
-# print(getusersitepackages())
-# print(os.path.realpath(os.readlink(getsitepackages()[0])))
-# # print(TEST_DATA)
-# my_data = pkg_resources.get_distribution('RMseq').__module__
-print(pkg_resources.resource_filename(__parent_dir__, __test_data__))
-# print(dir(getsitepackages()))#[0], __test_data__))
-sys.exit()
+TEST_DATA = pkg_resources.resource_filename(__parent_dir__, __test_data__))
 # These softwares are required to run.
 SOFTWARES = ['bwa',
              'clustalo',
