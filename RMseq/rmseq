@@ -128,7 +128,9 @@ AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
 TEST_DATA = pkg_resources.resource_filename(__name__,
                                             os.path \
                                             .join('test_data'))
-
+my_data = pkg_resources.resource_string(__name__, 'rmseq')
+print(my_data)
+sys.exit()
 # These softwares are required to run.
 SOFTWARES = ['bwa',
              'clustalo',
@@ -207,7 +209,16 @@ def test():
           ' --refprot '+os.path.join(TEST_DATA, 'RpoB.faa') +\
           ' --outdir '+os.path.abspath('test_results')
     print('Will now run test using the following command:', cmd)
-    os.system(cmd)
+#     os.system(cmd)
+    cmd = AMPLICON_EFFECT +\
+      ' -n '+os.path.abspath('test_results') +\
+      ' -f 200' +\
+      ' -w 5' +\
+      ' '+os.path.join(os.path.abspath('test_results'), 'amplicons.nuc') +\
+      ' '+os.path.join(TEST_DATA, 'RpoB.faa') +\
+      ' '+os.path.abspath('test_results')
+    print(cmd)
+
 
 
 def check_exists(cmd):
@@ -236,6 +247,7 @@ if __name__ == '__main__':
     if ARGS.subparser_name == 'test':
         test()
         print('Test completed.')
+#         finish_message()
     if ARGS.subparser_name == 'check':
         for software in sorted(SOFTWARES):
             path = check_exists(software)
