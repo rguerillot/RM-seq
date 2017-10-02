@@ -126,6 +126,7 @@ AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
 #     try:
 #         return getusersitepackages
 
+
 print(getusersitepackages())
 print(os.path.realpath(os.readlink(getsitepackages()[0])))
 # print(TEST_DATA)
