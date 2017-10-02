@@ -214,6 +214,7 @@ def test(outdir):
       ' '+os.path.join(TEST_DATA, 'RpoB.faa') +\
       ' '+os.path.abspath(outdir)
     os.system(cmd)
+    print('\nResults in', os.path.abspath(outdir))
 
 
 
