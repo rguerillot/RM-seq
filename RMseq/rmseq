@@ -22,9 +22,10 @@ import argparse
 import os
 import shutil
 import sys
-from RMseq import __test_data__
-from site import (getusersitepackages,
-                  getsitepackages)
+from RMseq import (__test_data__,
+                   __parent_dir__)
+# from site import (getusersitepackages,
+#                   getsitepackages)
 import pkg_resources
 
 STARTTIME = datetime.now()
@@ -127,11 +128,12 @@ AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
 #         return getusersitepackages
 
 
-print(getusersitepackages())
-print(os.path.realpath(os.readlink(getsitepackages()[0])))
-# print(TEST_DATA)
-my_data = pkg_resources.get_distribution('RMseq').__module__
-print(dir(getsitepackages()))#[0], __test_data__))
+# print(getusersitepackages())
+# print(os.path.realpath(os.readlink(getsitepackages()[0])))
+# # print(TEST_DATA)
+# my_data = pkg_resources.get_distribution('RMseq').__module__
+print(pkg_resources.resource_filename(__parent_dir__, __test_data__))
+# print(dir(getsitepackages()))#[0], __test_data__))
 sys.exit()
 # These softwares are required to run.
 SOFTWARES = ['bwa',
