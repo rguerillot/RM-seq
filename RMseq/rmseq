@@ -128,7 +128,7 @@ AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
 TEST_DATA = pkg_resources.resource_filename(__name__,
                                             os.path \
                                             .join('test_data'))
-my_data = pkg_resources.RMseq(__file__, 'rmseq')
+my_data = pkg_resources.resource_listdir(__name__, 'rmseq')
 print(my_data)
 sys.exit()
 # These softwares are required to run.
