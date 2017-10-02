@@ -126,8 +126,8 @@ AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
 #     try:
 #         return getusersitepackages
 
-print(os.path.realpath(os.readlink(getusersitepackages()[0])))
-print(getsitepackages())
+print(os.path.realpath(os.readlink(getusersitepackages())))
+print(os.path.realpath(os.readlink(getsitepackages()[0])))
 # print(TEST_DATA)
 my_data = pkg_resources.get_distribution('RMseq').__module__
 print(dir(getsitepackages()))#[0], __test_data__))
