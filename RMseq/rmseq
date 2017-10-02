@@ -24,8 +24,6 @@ import shutil
 import sys
 from RMseq import (__test_data__,
                    __parent_dir__)
-# from site import (getusersitepackages,
-#                   getsitepackages)
 import pkg_resources
 
 STARTTIME = datetime.now()
@@ -123,7 +121,7 @@ RMSEQ_PERL = pkg_resources.resource_filename(__name__,
 AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
                                                   os.path \
                                                   .join('amplicon-effect.py'))
-TEST_DATA = pkg_resources.resource_filename(__parent_dir__, __test_data__))
+TEST_DATA = pkg_resources.resource_filename(__parent_dir__, __test_data__)
 # These softwares are required to run.
 SOFTWARES = ['bwa',
              'clustalo',
@@ -202,7 +200,7 @@ def test():
           ' --refprot '+os.path.join(TEST_DATA, 'RpoB.faa') +\
           ' --outdir '+os.path.abspath('test_results')
     print('Will now run test using the following command:', cmd)
-#     os.system(cmd)
+    os.system(cmd)
     cmd = AMPLICON_EFFECT +\
       ' -n '+os.path.abspath('test_results') +\
       ' -f 200' +\
@@ -210,7 +208,7 @@ def test():
       ' '+os.path.join(os.path.abspath('test_results'), 'amplicons.nuc') +\
       ' '+os.path.join(TEST_DATA, 'RpoB.faa') +\
       ' '+os.path.abspath('test_results')
-    print(cmd)
+    os.system(cmd)
 
 
 

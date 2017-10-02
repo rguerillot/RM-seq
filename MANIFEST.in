@@ -2,3 +2,5 @@ include RMseq/test_data/R1.fq
 include RMseq/test_data/R2.fq
 include RMseq/test_data/RpoB.faa
 include RMseq/test_data/rpob.fna
+include RMseq/README.md
+include RMseq/README

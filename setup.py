@@ -8,6 +8,9 @@ LONG_DESCRIPTION = 'Given a set of paired-end reads, a reference sequence ' +\
                    'the reads to the reference and determine the pool ' +\
                    'of mutated alleles in the short reads.'
 
+if os.path.exists('README'):
+    long_description = open('README').read()
+
 setup(
     name = 'rmseq',
     version = RMseq.__version__,
