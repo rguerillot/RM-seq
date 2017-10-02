@@ -22,12 +22,9 @@ import argparse
 import os
 import shutil
 import sys
-from RMseq import (__version__,
-                   __version_date__,
-                   __author__,
-                   __author_email__,
-                   __github_username__,
-                   __download_url__)
+from RMseq import __test_data__
+from site import (getusersitepackages,
+                  getsitepackages)
 import pkg_resources
 
 STARTTIME = datetime.now()
@@ -125,11 +122,15 @@ RMSEQ_PERL = pkg_resources.resource_filename(__name__,
 AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
                                                   os.path \
                                                   .join('amplicon-effect.py'))
-TEST_DATA = pkg_resources.resource_filename(__name__,
-                                            os.path \
-                                            .join('test_data'))
-my_data = pkg_resources.resource_listdir(__name__, 'rmseq')
-print(my_data)
+# def get_test_data_location():
+#     try:
+#         return getusersitepackages
+
+print(getusersitepackages())
+print(getsitepackages())
+print(TEST_DATA)
+my_data = pkg_resources.get_distribution('RMseq').__module__
+print(dir(getsitepackages()))#[0], __test_data__))
 sys.exit()
 # These softwares are required to run.
 SOFTWARES = ['bwa',
