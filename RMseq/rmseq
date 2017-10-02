@@ -98,7 +98,7 @@ SUBPARSER_TEST = SUBPARSERS.add_parser('test', help='Run the test data set.',
                                           usage='rmseq test',
                                           description='Run the test')
 SUBPARSER_TEST.add_argument('outdir',
-                           help='Output directory for test results.')
+                            help='Output directory for test results.')
 
 ARGS = PARSER.parse_args()
 
@@ -191,10 +191,14 @@ def main():
           ' '+os.path.abspath(ARGS.outdir)
     os.system(cmd)
 
-def test():
+def test(outdir):
     '''
     Run the test dataset.
     '''
+    if os.path.exists(os.path.abspath(outdir)):
+        sys.exit('Output directory '+os.path.abspath(outdir) +
+                 ' already exists.  Please move or delete this directory ' +
+                 'or choose a different output directory.')
     cmd = RMSEQ_PERL+' --R1 '+os.path.join(TEST_DATA, 'R1.fq') +\
           ' --R2 '+os.path.join(TEST_DATA, 'R2.fq') +\
           ' --refnuc '+os.path.join(TEST_DATA, 'rpob.fna') +\
@@ -203,7 +207,7 @@ def test():
     print('Will now run test using the following command:', cmd)
     os.system(cmd)
     cmd = AMPLICON_EFFECT +\
-      ' -n '+os.path.abspath('test_results') +\
+      ' -n '+os.path.abspath(outdir) +\
       ' -f 200' +\
       ' -w 5' +\
       ' '+os.path.join(os.path.abspath(outdir), 'amplicons.nuc') +\
@@ -237,7 +241,7 @@ if __name__ == '__main__':
     if ARGS.subparser_name == 'version':
         version()
     if ARGS.subparser_name == 'test':
-        test()
+        test(ARGS.outdir)
         print('Test completed.')
 #         finish_message()
     if ARGS.subparser_name == 'check':
