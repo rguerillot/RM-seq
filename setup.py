@@ -8,6 +8,9 @@ LONG_DESCRIPTION = 'Given a set of paired-end reads, a reference sequence ' +\
                    'the reads to the reference and determine the pool ' +\
                    'of mutated alleles in the short reads.'
 
+if os.path.exists('README'):
+    LONG_DESCRIPTION = open('README').read()
+
 setup(
     name = 'rmseq',
     version = RMseq.__version__,
@@ -30,10 +33,6 @@ setup(
     scripts = ['RMseq/rmseq',
                'RMseq/amplicon-effect.py',
                'RMseq/RM-seq.pl'],
-    package_data={'rmseq': ['RMseq/test_data/R1.fq',
-                            'RMseq/test_data/R2.fq',
-                            'RMseq/test_data/RpoB.faa',
-                            'RMseq/test_data/rpob.fna']},
     include_package_data = True,
     install_requires = []
     )

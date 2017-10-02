@@ -22,12 +22,8 @@ import argparse
 import os
 import shutil
 import sys
-from RMseq import (__version__,
-                   __version_date__,
-                   __author__,
-                   __author_email__,
-                   __github_username__,
-                   __download_url__)
+from RMseq import (__test_data__,
+                   __parent_dir__)
 import pkg_resources
 
 STARTTIME = datetime.now()
@@ -101,7 +97,8 @@ SUBPARSER_CHECK = SUBPARSERS.add_parser('check', help='Check pipeline \
 SUBPARSER_TEST = SUBPARSERS.add_parser('test', help='Run the test data set.',
                                           usage='rmseq test',
                                           description='Run the test')
-
+SUBPARSER_TEST.add_argument('outdir',
+                            help='Output directory for test results.')
 
 ARGS = PARSER.parse_args()
 
@@ -125,10 +122,7 @@ RMSEQ_PERL = pkg_resources.resource_filename(__name__,
 AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
                                                   os.path \
                                                   .join('amplicon-effect.py'))
-TEST_DATA = pkg_resources.resource_filename(__name__,
-                                            os.path \
-                                            .join('test_data'))
-
+TEST_DATA = pkg_resources.resource_filename(__parent_dir__, __test_data__)
 # These softwares are required to run.
 SOFTWARES = ['bwa',
              'clustalo',
@@ -197,17 +191,31 @@ def main():
           ' '+os.path.abspath(ARGS.outdir)
     os.system(cmd)
 
-def test():
+def test(outdir):
     '''
     Run the test dataset.
     '''
+    if os.path.exists(os.path.abspath(outdir)):
+        sys.exit('Output directory '+os.path.abspath(outdir) +
+                 ' already exists.  Please move or delete this directory ' +
+                 'or choose a different output directory.')
     cmd = RMSEQ_PERL+' --R1 '+os.path.join(TEST_DATA, 'R1.fq') +\
           ' --R2 '+os.path.join(TEST_DATA, 'R2.fq') +\
           ' --refnuc '+os.path.join(TEST_DATA, 'rpob.fna') +\
           ' --refprot '+os.path.join(TEST_DATA, 'RpoB.faa') +\
-          ' --outdir '+os.path.abspath('test_results')
+          ' --outdir '+os.path.abspath(outdir)
     print('Will now run test using the following command:', cmd)
     os.system(cmd)
+    cmd = AMPLICON_EFFECT +\
+      ' -n '+os.path.abspath(outdir) +\
+      ' -f 200' +\
+      ' -w 5' +\
+      ' '+os.path.join(os.path.abspath(outdir), 'amplicons.nuc') +\
+      ' '+os.path.join(TEST_DATA, 'RpoB.faa') +\
+      ' '+os.path.abspath(outdir)
+    os.system(cmd)
+    print('\nResults in', os.path.abspath(outdir))
+
 
 
 def check_exists(cmd):
@@ -234,8 +242,9 @@ if __name__ == '__main__':
     if ARGS.subparser_name == 'version':
         version()
     if ARGS.subparser_name == 'test':
-        test()
+        test(ARGS.outdir)
         print('Test completed.')
+#         finish_message()
     if ARGS.subparser_name == 'check':
         for software in sorted(SOFTWARES):
             path = check_exists(software)
