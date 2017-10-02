@@ -23,7 +23,13 @@ import os
 import shutil
 import sys
 from RMseq import (__test_data__,
-                   __parent_dir__)
+                   __parent_dir__,
+                   __version__,
+                   __version_date__,
+                   __author__,
+                   __author_email__,
+                   __github_username__,
+                   __download_url__)
 import pkg_resources
 
 STARTTIME = datetime.now()
@@ -240,7 +246,7 @@ if __name__ == '__main__':
         main()
         finish_message()
     if ARGS.subparser_name == 'version':
-        version()
+        print(version())
     if ARGS.subparser_name == 'test':
         test(ARGS.outdir)
         print('Test completed.')

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 __name__            = 'rmseq'
 __test_data__    = 'test_data'

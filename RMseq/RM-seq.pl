@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+
 use strict;
 use Data::Dumper;
 use File::Path qw(make_path remove_tree);
@@ -13,6 +14,7 @@ sub natatime ($@)
         return splice @list, 0, $n;
     }
 }
+
 
 my(@Options, $debug, $R1, $R2, $barlen, $outdir, $basequal, $refnuc, $refprot, $minfreq, $force, $cpus, $minsize, $wsize, $subsample, $keepfiles);
 setOptions();
@@ -108,8 +110,8 @@ msg("Aligning groups with clustal-omega");
 $counter=0;
 #for my $barcode (keys %keep) {
 my @barc = keys %keep;
-my $nbjobs = 40;
-my $clustalo_cpu = int($cpus/$nbjobs);
+my $nbjobs = $cpus;
+my $clustalo_cpu = 1;
 my $it = natatime 800, @barc;
 while (my @vals = $it->()){
   $counter = $counter + 800;
