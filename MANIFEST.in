@@ -1,9 +1,1 @@
-setup.cfg
-setup.py
-RMseq/__init__.py
-RMseq/rmseq
-RMseq/RM-seq.pl
-RMseq/test_data/R1.fq
-RMseq/test_data/R2.fq
-RMseq/test_data/RpoB.faa
-RMseq/test_data/rpob.fna
+include RMseq/test_data/*
