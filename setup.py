@@ -9,7 +9,7 @@ LONG_DESCRIPTION = 'Given a set of paired-end reads, a reference sequence ' +\
                    'of mutated alleles in the short reads.'
 
 if os.path.exists('README'):
-    long_description = open('README').read()
+    LONG_DESCRIPTION = open('README').read()
 
 setup(
     name = 'rmseq',
