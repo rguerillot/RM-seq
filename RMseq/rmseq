@@ -97,7 +97,8 @@ SUBPARSER_CHECK = SUBPARSERS.add_parser('check', help='Check pipeline \
 SUBPARSER_TEST = SUBPARSERS.add_parser('test', help='Run the test data set.',
                                           usage='rmseq test',
                                           description='Run the test')
-
+SUBPARSER_TEST.add_argument('outdir',
+                           help='Output directory for test results.')
 
 ARGS = PARSER.parse_args()
 
@@ -198,16 +199,16 @@ def test():
           ' --R2 '+os.path.join(TEST_DATA, 'R2.fq') +\
           ' --refnuc '+os.path.join(TEST_DATA, 'rpob.fna') +\
           ' --refprot '+os.path.join(TEST_DATA, 'RpoB.faa') +\
-          ' --outdir '+os.path.abspath('test_results')
+          ' --outdir '+os.path.abspath(outdir)
     print('Will now run test using the following command:', cmd)
     os.system(cmd)
     cmd = AMPLICON_EFFECT +\
       ' -n '+os.path.abspath('test_results') +\
       ' -f 200' +\
       ' -w 5' +\
-      ' '+os.path.join(os.path.abspath('test_results'), 'amplicons.nuc') +\
+      ' '+os.path.join(os.path.abspath(outdir), 'amplicons.nuc') +\
       ' '+os.path.join(TEST_DATA, 'RpoB.faa') +\
-      ' '+os.path.abspath('test_results')
+      ' '+os.path.abspath(outdir)
     os.system(cmd)
 
 
