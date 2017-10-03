@@ -4,7 +4,7 @@
 
 pandoc --from=markdown --to=rst README.md -o README
 
-git tag 0.0.33b
+git tag 0.0.35b
 
 git push --tags
 
