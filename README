@@ -169,37 +169,89 @@ Outputs
 RM-seq produces a tap-separated output file called amplicons.effect with
 the following columns:
 
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
-| Column         | Example                 | Description                                                                                 |
-+================+=========================+=============================================================================================+
-| barcode        | GACACAACTGAGATTA        | The sequence of the barcode                                                                 |
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
-| sample         | Rifampicin1             | The output folder name                                                                      |
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
-| aa\_mutation   | H481N                   | The annotation of the amino acid change (Histidine residue 481 substituted by Asparagine)   |
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
-| start          | 481                     | start coordinate of the mutation                                                            |
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
-| end            | 481                     | end coordinate of the mutation                                                              |
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
-| orf            | VRPPDKNNRFVGLYCTLV...   | the protein sequence of the consensus sequence                                              |
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
-| dna            | GGTTAGACCACCCGATAA...   | The dna sequence of the consensus sequence                                                  |
-+----------------+-------------------------+---------------------------------------------------------------------------------------------+
++----------+------------+---------------+
+| Column   | Example    | Description   |
++==========+============+===============+
+| barcode  | GACACAACTG | The sequence  |
+|          | AGATTA     | of the        |
+|          |            | barcode       |
++----------+------------+---------------+
+| sample   | Rifampicin | The output    |
+|          | 1          | folder name   |
++----------+------------+---------------+
+| aa\_muta | H481N      | The           |
+| tion     |            | annotation of |
+|          |            | the amino     |
+|          |            | acid change   |
+|          |            | (Histidine    |
+|          |            | residue 481   |
+|          |            | substituted   |
+|          |            | by            |
+|          |            | Asparagine)   |
++----------+------------+---------------+
+| start    | 481        | start         |
+|          |            | coordinate of |
+|          |            | the mutation  |
++----------+------------+---------------+
+| end      | 481        | end           |
+|          |            | coordinate of |
+|          |            | the mutation  |
++----------+------------+---------------+
+| orf      | VRPPDKNNRF | the protein   |
+|          | VGLYCTLV.. | sequence of   |
+|          | .          | the consensus |
+|          |            | sequence      |
++----------+------------+---------------+
+| dna      | GGTTAGACCA | The dna       |
+|          | CCCGATAA.. | sequence of   |
+|          | .          | the consensus |
+|          |            | sequence      |
++----------+------------+---------------+
 
 The other files produced by RM-seq are:
 
-+----------------------+---------------------------------------------------------------------------------------------------------------+
-| File name            | Description                                                                                                   |
-+======================+===============================================================================================================+
-| amplicons.nuc        | Multifasta file containing all the consensus nucleotide sequence (header of sequence is the barcode)          |
-+----------------------+---------------------------------------------------------------------------------------------------------------+
-| amplicons.orf        | Multifasta file containing all the consensus protein sequence (header of sequence is the barcode)             |
-+----------------------+---------------------------------------------------------------------------------------------------------------+
-| amplicons.barcodes   | Table with the count of each barcode sequence                                                                 |
-+----------------------+---------------------------------------------------------------------------------------------------------------+
-| amplicons.cdhit      | Multifasta file containing all the unique consensus nucleotide sequence (header of sequence is the barcode)   |
-+----------------------+---------------------------------------------------------------------------------------------------------------+
++-------------+---------------+
+| File name   | Description   |
++=============+===============+
+| amplicons.n | Multifasta    |
+| uc          | file          |
+|             | containing    |
+|             | all the       |
+|             | consensus     |
+|             | nucleotide    |
+|             | sequence      |
+|             | (header of    |
+|             | sequence is   |
+|             | the barcode)  |
++-------------+---------------+
+| amplicons.o | Multifasta    |
+| rf          | file          |
+|             | containing    |
+|             | all the       |
+|             | consensus     |
+|             | protein       |
+|             | sequence      |
+|             | (header of    |
+|             | sequence is   |
+|             | the barcode)  |
++-------------+---------------+
+| amplicons.b | Table with    |
+| arcodes     | the count of  |
+|             | each barcode  |
+|             | sequence      |
++-------------+---------------+
+| amplicons.c | Multifasta    |
+| dhit        | file          |
+|             | containing    |
+|             | all the       |
+|             | unique        |
+|             | consensus     |
+|             | nucleotide    |
+|             | sequence      |
+|             | (header of    |
+|             | sequence is   |
+|             | the barcode)  |
++-------------+---------------+
 
 Issues
 ------
