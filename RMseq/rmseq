@@ -259,5 +259,5 @@ if __name__ == '__main__':
                       file=sys.stderr)
             else:
                 print('Dependency '+software+' is not installed.  Refer ' +\
-                      'to README at https://pypi.python.org/pypi/Pandoo.',
+                      'to README at https://github.com/rguerillot/RM-seq',
                       file=sys.stderr)

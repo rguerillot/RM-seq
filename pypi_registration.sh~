@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+ 
+
+pandoc --from=markdown --to=rst README.md -o README
+
+git tag 0.0.29b
+
+git push --tags
+
+git add .
+
+git commit -m 'update readme, update check'
+
+git push origin -u master
+
+python3 setup.py sdist upload -r pypi

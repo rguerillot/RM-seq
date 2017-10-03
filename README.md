@@ -12,37 +12,37 @@ A complete descrition of the RM-seq method will be available soon (article submi
 1. To be able to us this pipeline you need to have sequenced amplicon library with molecular barcodes.
 2. It only supports paired-end FASTQ reads (including .gz compressed fastq files).
 3. It needs paired reads that are overlapping.
-3. It needs bwa aligner and EMBOSS to be installed.
 4. It needs a reference fasta sequences of the sequenced gene (DNA and protein sequence).
-4. It's written in Python and Perl.
+5. It's written in Python3 and Perl.
 
 ## Installation
 
 ### Install RM-seq pipeline
+
 ```
 pip3 install rmseq
 ```
 
-If installing using `pip3 install rmseq --user`
-Create symlinks to the packaged data using 
-
-    ln -s $HOME/.local/lib/python3.6/site-packages/RMseq/test_data/ $HOME/.local/bin/
-
 ### Dependencies
+
 RM-seq has the following package dependencies:
 * EMBOSS >= 6.6 for `clustalo`, `cons`, `getorf`, `diffseq`
 * clustal-omega >= 1.2.1
 * bwa >= 0.7.15
 * samtools >= 1.3
+* bedtools >= 2.26.0
 * pear >= 0.9.10
 * cd-hit >= 4.7
 * trimmomatic >= 0.36
 * python modules: `plumbum`, `Biopython`
 
 If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew.sh/) packaging system:
+
 ```
 brew tap homebrew/science
 brew tap tseemann/bioinformatics-linux
+brew install parallel; parallel --citation # please write will cite
+brew install bedtools
 brew install EMBOSS
 brew install clustal-omega
 brew install bwa
