@@ -34,5 +34,8 @@ setup(
     scripts = ['RMseq/rmseq',
                'RMseq/amplicon-effect.py',
                'RMseq/RM-seq.pl'],
-    include_package_data = True
+    include_package_data = True,
+    install_requires = ['plumbum>=1.6.3',
+                        'biopython>=1.69',
+                        'numpy>=1.13.1']
     )
