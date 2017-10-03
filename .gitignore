@@ -1,4 +1,5 @@
 pypi_registration.sh
+pypi_registration.sh~
 rmseq.egg-info
 RMseq/__pycache__
 dist
