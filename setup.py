@@ -33,6 +33,6 @@ setup(
     packages = ['RMseq'],
     scripts = ['RMseq/rmseq',
                'RMseq/amplicon-effect.py',
-               'RMseq/RM-seq.pl'],
-    include_package_data = True
+               'RMseq/RM-seq.pl']
+#    include_package_data = True
     )
