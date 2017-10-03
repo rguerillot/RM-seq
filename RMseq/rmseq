@@ -220,7 +220,11 @@ def test(outdir):
       ' '+os.path.join(TEST_DATA, 'RpoB.faa') +\
       ' '+os.path.abspath(outdir)
     os.system(cmd)
-    print('\nResults in', os.path.abspath(outdir))
+    if os.path.exists(os.path.join(os.path.abspath(outdir),
+                                   'amplicons.effect')) and \
+    os.path.getsize(os.path.join(os.path.abspath(outdir),
+                                   'amplicons.effect')) > 0:
+        print('\nTest success.\nResults in '+os.path.abspath(outdir)+'\n')
 
 
 
@@ -249,8 +253,6 @@ if __name__ == '__main__':
         print(version())
     if ARGS.subparser_name == 'test':
         test(ARGS.outdir)
-        print('Test completed.')
-#         finish_message()
     if ARGS.subparser_name == 'check':
         for software in sorted(SOFTWARES):
             path = check_exists(software)
