@@ -129,6 +129,7 @@ AMPLICON_EFFECT = pkg_resources.resource_filename(__name__,
                                                   os.path \
                                                   .join('amplicon-effect.py'))
 TEST_DATA = pkg_resources.resource_filename(__parent_dir__, __test_data__)
+
 # These softwares are required to run.
 SOFTWARES = ['bwa',
              'clustalo',
@@ -210,7 +211,7 @@ def test(outdir):
           ' --refnuc '+os.path.join(TEST_DATA, 'rpob.fna') +\
           ' --refprot '+os.path.join(TEST_DATA, 'RpoB.faa') +\
           ' --outdir '+os.path.abspath(outdir)
-    print('Will now run test using the following command:', cmd)
+    print('oooooooo Will now run test using the following command:', '\n', cmd)
     os.system(cmd)
     cmd = AMPLICON_EFFECT +\
       ' -n '+os.path.abspath(outdir) +\
@@ -224,7 +225,7 @@ def test(outdir):
                                    'amplicons.effect')) and \
     os.path.getsize(os.path.join(os.path.abspath(outdir),
                                    'amplicons.effect')) > 0:
-        print('\nTest success.\nResults in '+os.path.abspath(outdir)+'\n')
+        print('\noooooooo Test success.\nResults in '+os.path.abspath(outdir)+'\n')
 
 
 

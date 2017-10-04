@@ -38,7 +38,7 @@ if (-d $outdir) {
 make_path($outdir);
 
 # Trim read from 3' end if base quality below threshold
-msg("\noooooooo Trimming end of reads with if base quality below $basequal");
+msg("\noooooooo Trimming end of reads when base quality is below $basequal");
 run_cmd("trimmomatic PE -threads $cpus -phred33 \Q$R1\E \Q$R2\E $outdir/trimmed-R1.fq $outdir/trimmed-R1-unpaired.fq $outdir/trimmed-R2.fq $outdir/trimmed-R2-unpaired.fq TRAILING:$basequal > /dev/null 2>&1");
 
 # Keep reads that map on reference
@@ -52,17 +52,6 @@ run_cmd("bamToFastq -i $outdir/mapped.bam -fq $outdir/mapped_reads_R1.fq -fq2 $o
 # Overlap reads
 msg("\noooooooo Overlapping reads");
 run_cmd("pear -u 0 -v 20 -j $cpus -f $outdir/mapped_reads_R1.fq -r $outdir/mapped_reads_R2.fq -o $outdir/reads >> $outdir/amplicons.log 2>&1");
-
-# Deleting files
-#run_cmd("rm $outdir/out.sam");
-#run_cmd("rm $outdir/out.bam");
-#run_cmd("rm $outdir/mapped.bam");
-#run_cmd("rm $outdir/trimmed-R1.fq");
-#run_cmd("rm $outdir/trimmed-R2.fq");
-#run_cmd("rm $outdir/trimmed-R1-unpaired.fq");
-#run_cmd("rm $outdir/trimmed-R2-unpaired.fq");
-#run_cmd("rm $outdir/mapped_reads_R1.fq");
-#run_cmd("rm $outdir/mapped_reads_R2.fq");
 
 # Count
 msg("\noooooooo Counting barcodes");
@@ -108,14 +97,14 @@ for my $barcode (keys %keep) {
 }
 
 # Alignment and consensus
-msg("\noooooooo Aligning and creating consensus sequences (please wait)");
+msg("\n\noooooooo Aligning and creating consensus sequences (please wait)");
 my $nbjobs = $cpus;
 my $clustalo_cpu = 1;
-run_cmd("nice parallel --bar --progress -j $nbjobs \'clustalo -i {} --outfmt=fa --threads=$clustalo_cpu | cons -filter -name {/.} -plurality 0.5\' ::: $outdir/*fna 1>> \Q$outdir\E/amplicons.nuc\E", 1);
+run_cmd("find $outdir -maxdepth 1 -name '*.fna' | nice parallel --bar --progress -j $nbjobs \'clustalo -i {} --outfmt=fa --threads=$clustalo_cpu | cons -filter -name {/.} -plurality 0.5\' >> \Q$outdir\E/amplicons.nuc\E", 1);
 
 # Cleanup
 unless ($keepfiles) {
-  msg("\noooooooo Deleting files");
+  msg("\noooooooo Deleting intermediate files");
   unlink "$outdir/$_.fna", "$outdir/out.sam", "$outdir/out.bam", "$outdir/mapped.bam", "$outdir/trimmed-R1.fq", "$outdir/trimmed-R2.fq", "$outdir/trimmed-R1-unpaired.fq" , "$outdir/trimmed-R2-unpaired.fq", "$outdir/mapped_reads_R1.fq", "$outdir/mapped_reads_R2.fq" for keys %keep;
   unlink <$outdir/reads.*>;
 }
