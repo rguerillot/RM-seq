@@ -38,30 +38,34 @@ if (-d $outdir) {
 make_path($outdir);
 
 # Trim read from 3' end if base quality below threshold
-msg("Trimming end of reads with if base quality below $basequal");
+msg("\noooooooo Trimming end of reads with if base quality below $basequal");
 run_cmd("trimmomatic PE -threads $cpus -phred33 \Q$R1\E \Q$R2\E $outdir/trimmed-R1.fq $outdir/trimmed-R1-unpaired.fq $outdir/trimmed-R2.fq $outdir/trimmed-R2-unpaired.fq TRAILING:$basequal > /dev/null 2>&1");
-run_cmd("rm $outdir/trimmed-R1-unpaired.fq");
-run_cmd("rm $outdir/trimmed-R2-unpaired.fq");
 
 # Keep reads that map on reference
-msg("Filtering reads mapping on reference");
-run_cmd("bwa index $refnuc");
-run_cmd("bwa mem -t $cpus $refnuc $outdir/trimmed-R1.fq $outdir/trimmed-R2.fq > $outdir/out.sam");
-run_cmd("samtools view -Sb $outdir/out.sam > $outdir/out.bam");
-run_cmd("samtools view -b -f 0x2 $outdir/out.bam > $outdir/mapped.bam");
-run_cmd("bamToFastq -i $outdir/mapped.bam -fq $outdir/mapped_reads_R1.fq -fq2 $outdir/mapped_reads_R2.fq");
-run_cmd("rm $outdir/out.sam");
-run_cmd("rm $outdir/out.bam");
-run_cmd("rm $outdir/mapped.bam");
+msg("\noooooooo Filtering reads mapping on reference");
+run_cmd("bwa index $refnuc >> $outdir/amplicons.log 2>&1");
+run_cmd("bwa mem -t $cpus $refnuc $outdir/trimmed-R1.fq $outdir/trimmed-R2.fq 1> $outdir/out.sam 2>> $outdir/amplicons.log");
+run_cmd("samtools view -Sb $outdir/out.sam 1> $outdir/out.bam 2>> $outdir/amplicons.log");
+run_cmd("samtools view -b -f 0x2 $outdir/out.bam 1> $outdir/mapped.bam 2>> $outdir/amplicons.log");
+run_cmd("bamToFastq -i $outdir/mapped.bam -fq $outdir/mapped_reads_R1.fq -fq2 $outdir/mapped_reads_R2.fq >> $outdir/amplicons.log 2>&1");
 
 # Overlap reads
-msg("Overlapping reads with 'pear'");
-run_cmd("pear -u 0 -v 20 -j $cpus -f $outdir/mapped_reads_R1.fq -r $outdir/mapped_reads_R2.fq -o $outdir/reads");
-run_cmd("rm $outdir/mapped_reads_R1.fq");
-run_cmd("rm $outdir/mapped_reads_R2.fq");
+msg("\noooooooo Overlapping reads");
+run_cmd("pear -u 0 -v 20 -j $cpus -f $outdir/mapped_reads_R1.fq -r $outdir/mapped_reads_R2.fq -o $outdir/reads >> $outdir/amplicons.log 2>&1");
+
+# Deleting files
+#run_cmd("rm $outdir/out.sam");
+#run_cmd("rm $outdir/out.bam");
+#run_cmd("rm $outdir/mapped.bam");
+#run_cmd("rm $outdir/trimmed-R1.fq");
+#run_cmd("rm $outdir/trimmed-R2.fq");
+#run_cmd("rm $outdir/trimmed-R1-unpaired.fq");
+#run_cmd("rm $outdir/trimmed-R2-unpaired.fq");
+#run_cmd("rm $outdir/mapped_reads_R1.fq");
+#run_cmd("rm $outdir/mapped_reads_R2.fq");
 
 # Count
-msg("Counting barcodes");
+msg("\noooooooo Counting barcodes");
 my $head = $subsample > 0 ? " head -n $subsample | " : "";
 run_cmd("cat \Q$outdir/reads.assembled.fastq\E | paste - - - - | $head cut -f 2 | cut -c1-$barlen | sort | uniq -c | sort -nr > \Q$outdir/amplicons.barcodes\E");
 
@@ -80,7 +84,7 @@ my $kept = scalar keys %keep;
 msg("Found $found barcodes, keeping $kept with frequency >= $minfreq");
 
 # Go back and bin reads
-msg("Binning reads into $kept files");
+msg("\noooooooo Binning reads and creating FASTA files");
 my %seq;
 open RAW, "-|", "cat \Q$outdir/reads.assembled.fastq\E | paste - - - - | cut -f 2";
 while (my $dna = <RAW>) {
@@ -90,8 +94,7 @@ while (my $dna = <RAW>) {
   push @{ $seq{$barcode} }, substr $dna, $barlen;
 }
 
-# Write out files
-msg("Creating FASTA files");
+# Write FASTA files
 my $counter=0;
 for my $barcode (keys %keep) {
   print STDERR "\rWriting $barcode ", ++$counter, "/$kept";
@@ -103,54 +106,20 @@ for my $barcode (keys %keep) {
   }
   close $fh;
 }
-print STDERR "\nOK\n";
 
-# Alignment
-msg("Aligning groups with clustal-omega");
-$counter=0;
-#for my $barcode (keys %keep) {
-my @barc = keys %keep;
+# Alignment and consensus
+msg("\noooooooo Aligning and creating consensus sequences (please wait)");
 my $nbjobs = $cpus;
 my $clustalo_cpu = 1;
-my $it = natatime 800, @barc;
-while (my @vals = $it->()){
-  $counter = $counter + 800;
-  print STDERR "\rAligning barcode ", $counter, "/$kept ";
-  my $aln = join(' ',@vals);
-  run_cmd("nice parallel --progress -j $nbjobs clustalo -i \Q$outdir/{}.fna\E -o \Q$outdir/{}.aln\E --outfmt=fa --threads=$clustalo_cpu 2> /dev/null ::: $aln", 1);
-  # Consensus of alignment
-  msg("Creating consensus files");
-  run_cmd("nice parallel --progress -j $nbjobs cons -sequence \Q$outdir/{}.aln\E -outseq \Q$outdir/{}.cns\E -name {} -plurality 0.5 2> /dev/null ::: $aln", 1);
-}
-#  unlink "$outdir/$barcode.fna", "$outdir/$barcode.aln"
-print STDERR "\nOK\n";
-
-# Combining
-msg("Combining consensus sequences");
-run_cmd("find $outdir -maxdepth 1 -name *.cns -print0 | xargs -0 cat > \Q$outdir\E/amplicons.nuc\E");
-#run_cmd("cat \Q$outdir\E/*A.cns > \Q$outdir/ampliconsA.fsa\E");
-#run_cmd("cat \Q$outdir\E/*T.cns > \Q$outdir/ampliconsT.fsa\E");
-#run_cmd("cat \Q$outdir\E/*C.cns > \Q$outdir/ampliconsC.fsa\E");
-#run_cmd("cat \Q$outdir\E/*G.cns > \Q$outdir/ampliconsG.fsa\E");
-#run_cmd("cat \Q$outdir\E/amplicons*.fsa > \Q$outdir/amplicons.nuc\E");
-#run_cmd("rm \Q$outdir\E/ampliconsA.fsa\E");
-#run_cmd("rm \Q$outdir\E/ampliconsT.fsa\E");
-#run_cmd("rm \Q$outdir\E/ampliconsC.fsa\E");
-#run_cmd("rm \Q$outdir\E/ampliconsG.fsa\E");
+run_cmd("nice parallel --bar --progress -j $nbjobs \'clustalo -i {} --outfmt=fa --threads=$clustalo_cpu | cons -filter -name {/.} -plurality 0.5\' ::: $outdir/*fna 1>> \Q$outdir\E/amplicons.nuc\E", 1);
 
 # Cleanup
 unless ($keepfiles) {
-  msg("Deleting old files");
-  unlink "$outdir/$_.cns", "$outdir/$_.fna", "$outdir/$_.aln" for keys %keep;
+  msg("\noooooooo Deleting files");
+  unlink "$outdir/$_.fna", "$outdir/out.sam", "$outdir/out.bam", "$outdir/mapped.bam", "$outdir/trimmed-R1.fq", "$outdir/trimmed-R2.fq", "$outdir/trimmed-R1-unpaired.fq" , "$outdir/trimmed-R2-unpaired.fq", "$outdir/mapped_reads_R1.fq", "$outdir/mapped_reads_R2.fq" for keys %keep;
   unlink <$outdir/reads.*>;
 }
 
-# Annotate variant effect
-msg("Annotating mutations effect");
-# run_cmd("amplicon-effect.py -n \Q$outdir\E -f \Q$minsize\E -w \Q$wsize\E \Q$outdir/amplicons.nuc\E \Q$refprot\E \Q$outdir\E");
-
-msg("Results in $outdir/amplicons.*");
-run_cmd("find $outdir -type f");
 exit(0);
 
 #----------------------------------------------------------------------

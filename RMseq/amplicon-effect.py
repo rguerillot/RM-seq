@@ -103,8 +103,8 @@ def get_barcode_fasta(my_fasta):
 def get_cluster_annot(barcode_cluster_dict, dict_bar_nuc, dict_bar_orf):
     fasta_sequences = SeqIO.parse(open(outfolder + "/amplicons.orf"),'fasta')
     nb_fa_records = len(list(SeqIO.parse(open(outfolder + "/amplicons.orf"),'fasta')))
-    print("running: diffseq")
-    print("processing " + str(nb_fa_records)+ " unique orf")
+    print("\n" +"oooooooo Annotating mutations")
+    print("processing " + str(nb_fa_records)+ " unique variant")
     counter = 0
     cluster_number = 0
     dict_cluster_annot = {}
@@ -144,23 +144,24 @@ def get_cluster_annot(barcode_cluster_dict, dict_bar_nuc, dict_bar_orf):
     return dict_cluster_annot
         
 def main():
-    print("multi-fasta file: " + conseq_file)
-    print("reference file: " + reference_file)
-    print("output directory: " + outfolder)
-    print("sample name: " + sample_name)
-    print("keeping ORF: >= " + ORFminsize + "bp")
+    #print("multi-fasta file: " + conseq_file)
+    #print("reference file: " + reference_file)
+    #print("output directory: " + outfolder)
+    #print("sample name: " + sample_name)
+    #print("keeping ORF: >= " + ORFminsize + "bp")
 
     # create outputdir if it doesn't exit
     if not os.path.exists(outfolder):
         os.makedirs(outfolder)
 
     # run cd-hit-est to cluster identical amplicons
-    print("running cd-hit to cluster identical amplicons")
-    cdhit = subprocess.call(["cd-hit-est", "-bak", "1", "-c", "1", "-G", "0", "-aL", "1", "-i", conseq_file, "-o", outfolder + "/amplicons.cdhit"])
+    print("\n" + "oooooooo Finding identical amplicons")
+    logfile = open(outfolder + "/amplicons.log","a")
+    cdhit = subprocess.call(["cd-hit-est", "-bak", "1", "-c", "1", "-G", "0", "-aL", "1", "-i", conseq_file, "-o", outfolder + "/amplicons.cdhit"], stdout=logfile)
 
     # run EMBOSS getORF to find the largest ORF of each conseq
     get_ORF = getorf["-sequence", outfolder + "/amplicons.cdhit", "-outseq", outfolder + "/amplicons.orf", "-table", "11", "-minsize", ORFminsize, "-reverse", "FALSE"]
-    print("running: ", get_ORF)
+    #print("Running: ", get_ORF)
     get_ORF()
         
     # get dictionnary of cluster, orf and nucleotide
@@ -177,23 +178,24 @@ def main():
     clust_annot = get_cluster_annot(barcode_cluster, barcode_orf, barcode_nuc)
 
     # write annotation files
-    print("writing annotation files")
-    out_raw_table = open(outfolder+"/amplicons_raw.effect", "a") #warning appending to file'
+    print("\n" + "oooooooo Writing annotation files")
+    out_raw_table = open(outfolder+"/amplicons_raw.effect", "a") 
     out_raw_table.write("barcode" + "\t" + "sample" + "\t" +  "Start" + "\t" + "End" + "\t" + "Score" + "\t" + "Strand" + "\t" + "start" + "\t" + "end" + "\t" + "length" + "\t" + "name" + "\t" + "sequence" + "\t" + "first_feature" + "\t" + "second_feature" + "\t" + "orf" + "\t" + "dna" + "\n")
-    out_table = open(outfolder+"/amplicons.effect", "a") #warning appending to file
+    out_table = open(outfolder+"/amplicons.effect", "a") 
     out_table.write("barcode" + "\t" + "sample" + "\t" + "aa_mutation" + "\t" + "start" + "\t" + " end" + "\t" + "orf" + "\t" + "dna" + "\n")
-
-    print("# consensus amplicons = " + str(len(barcode_nuc)))
-    print("# non-identical consensus amplicons = " + str(len(set(barcode_cluster.values()))))
-    print("# non-identical consensus amplicons translated = " + str(len(barcode_orf)))
-    print("# non-identical orf annotated = " + str(len(clust_annot)))
+    
+    print("\n" + "oooooooo Results summary")
+    print("# of consensus amplicons = " + str(len(barcode_nuc)))
+    print("# of non-identical consensus amplicons = " + str(len(set(barcode_cluster.values()))))
+    print("# of non-identical consensus amplicons translated = " + str(len(barcode_orf)))
+    print("# of non-identical orf annotated = " + str(len(clust_annot)))
 
 
     for barcode in barcode_nuc:
         try:
             raw_annot = str(barcode) + "\t" +  clust_annot.get(int(barcode_cluster.get(str(barcode))))[0]
             annot = str(barcode) + "\t" + clust_annot.get(int(barcode_cluster.get(str(barcode))))[1]
-        except TypeError: # manage .get error when there is no orf corresponding to barcode (no orf found)
+        except TypeError: # manage error when there is no orf corresponding to barcode (no orf found)
             raw_annot = str(barcode) + "\t" + sample_name + "\t" + str(barcode) + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + str(barcode) + "\t" + "None" + "\t" + "None" + "\t" + "None" + "\t" + barcode_nuc.get(str(barcode)) + "\t" + "no orf found" +  "\n"
             annot = str(barcode) + "\t" + sample_name + "\t" + str(barcode) + "\t" + "NA" + "\t" + "None" + "\t" + "None" + "\t" +  barcode_nuc.get(str(barcode)) + "\t" + "no orf found" +  "\n"
         out_raw_table.write(raw_annot)
