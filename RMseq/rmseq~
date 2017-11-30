@@ -68,7 +68,7 @@ SUBPARSER_RUN.add_argument('-c', '--cpus',
                            help='Number of CPUs to use (default ' +\
                                 str(cpu_count())+')',
                            default=cpu_count(), required=False)
-SUBPARSER_RUN.add_argument('-t', '--translation',
+SUBPARSER_RUN.add_argument('-rf', '--readingframe',
                            help='Manually set the reading frame ' +\
                            'for translation (use 1, 2 or 3 - use getorf by defaut)', 
                            default="getorf", required=False)
@@ -195,7 +195,7 @@ def main():
 
     cmd = AMPLICON_EFFECT +\
           ' -n '+os.path.basename(os.path.abspath(ARGS.outdir)) +\
-          ' -t '+str(ARGS.translation) +\
+          ' -rf '+str(ARGS.readingframe) +\
           ' -f '+str(ARGS.minsize) +\
           ' -w '+str(ARGS.wsize) +\
           ' '+os.path.join(os.path.abspath(ARGS.outdir), 'amplicons.nuc') +\
