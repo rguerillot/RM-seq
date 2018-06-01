@@ -1,6 +1,7 @@
+## Subsample reads file and run rmseq
 
+### Set variables in your bash terminal
 
-# Subsample reads file with seqtk and run RMseq on them in bash
 ```
 sampled_reads=0
 increment=50000
@@ -9,7 +10,11 @@ fastq_file_R1=my_R1.fq # replace with path to your R1 fastq file
 fastq_file_R2=my_R2.fq # replace with path to your R2 fastq file
 refnuc=my_ref_nuc.fa # replace with path to you reference nucleotide fasta file
 refprot=ref_prot.fa # replace with your reference protein fasta file
+```
 
+### Subsample reads with seqtk and run rmseq
+
+```
 while [ "$sampled_reads" -lt "$total_reads_number" ]
 do
   sampled_reads=$((sampled_reads+increment))
@@ -19,28 +24,33 @@ do
   echo "oooo Running rmseq on $sampled_reads subsampled reads"
   rmseq run $sampled_reads_R1.fq $sampled_reads_R2.fq $refnuc $refprot $sampled_reads_rmseq_outdir
 done
+```
 
+### Concatenate all amplicoons.effect file obtained from different size of subsampling 
+
+```
 cat ./*_rmseq_outdir/amplicons.effect >> all.amplicons.tab
 ```
 
-# Plot the number of consensus reads (from 10 reads) versus the number of reads (depth of sequencing) with Rstudio
+## Plot the number of consensus reads (from 10 reads) versus the number of reads (depth of sequencing) with Rstudio
 
-## Install the tidyverse package
+### Install the tidyverse package
 ```
 install.packages("tidyverse")
 ```
 
-## Load tidyverse package
+### Load tidyverse package
 ```
 library(tidyverse)
 ```
 
-## import all your consensus amplicon table into R
+### import all your consensus amplicon table into R
 ```
 df_reads_subsampling <- read.table(file = "all_amplicons.tab", header = T)
 ```
 
-## count the number of consensus amplicon obtained at each sequencing depth (fastq subsampling)
+### count the number of consensus amplicon obtained at each sequencing depth (fastq subsampling)
+
 ```
 df_barcode_count <- df_reads_subsampling %>%
   group_by(sample) %>%
@@ -48,7 +58,8 @@ df_barcode_count <- df_reads_subsampling %>%
   mutate(barcode_nb = n, reads_nb = as.integer(gsub("_test_minfreq5", replacement = "", x = sample)) )
 ```
 
-## plot consensus reads versus number of reads
+### plot consensus reads versus number of reads
+
 ```
 barcode_nb_f_readnb <- ggplot()+
   stat_smooth(data = df_barcode_count, aes(x=reads_nb, y = barcode_nb)) +
