@@ -12,7 +12,7 @@ refnuc=my_ref_nuc.fa # replace with path to your reference nucleotide fasta file
 refprot=ref_prot.fa # replace with path to your reference protein fasta file
 ```
 
-### Subsample reads with seqtk and run rmseq
+### Subsample reads with seqtk and run rmseq pipeline
 
 ```
 while [ "$sampled_reads" -lt "$total_reads_number" ]
@@ -26,30 +26,26 @@ do
 done
 ```
 
-### Concatenate all amplicoons.effect file obtained from different size of subsampling 
+### Concatenate all amplicons.effect files obtained from different reads subsamplings
 
 ```
-cat ./*_rmseq_outdir/amplicons.effect >> all.amplicons.tab
+cat ./*/amplicons.effect >> all.amplicons.tab
 ```
 
 ## Plot the number of consensus reads (from 10 reads) versus the number of reads (depth of sequencing) with Rstudio
 
-### Install the tidyverse package
+### Install and load the tidyverse package
 ```
 install.packages("tidyverse")
-```
-
-### Load tidyverse package
-```
 library(tidyverse)
 ```
 
-### import all your consensus amplicon table into R
+### Import the concatenated consensus amplicon table as a dataframe
 ```
 df_reads_subsampling <- read.table(file = "all_amplicons.tab", header = T)
 ```
 
-### count the number of consensus amplicon obtained at each sequencing depth (fastq subsampling)
+### Count the number of consensus amplicon obtained at the different sequencing depth (reads subsampling)
 
 ```
 df_barcode_count <- df_reads_subsampling %>%
