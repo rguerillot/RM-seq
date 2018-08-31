@@ -154,4 +154,4 @@ Please report problems to the [Issues Page](https://github.com/rguerillot/RM-seq
 
 ## Author
 
-Romain Guerillot | Torsten Seemann | Mark B Schultz (github: schultzm)
+Romain Guerillot (github: rguerillot) | Torsten Seemann (github: tseemann) | Mark B Schultz (github: schultzm)
