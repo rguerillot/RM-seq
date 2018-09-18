@@ -16,7 +16,7 @@ sub natatime ($@)
 }
 
 
-my(@Options, $debug, $R1, $R2, $barlen, $outdir, $basequal, $refnuc, $refprot, $minfreq, $force, $cpus, $minsize, $wsize, $subsample, $keepfiles);
+my(@Options, $debug, $R1, $R2, $barlen, $outdir, $basequal, $refnuc, $minfreq, $force, $cpus, $minsize, $wsize, $subsample, $keepfiles);
 setOptions();
 
 # Options
@@ -37,12 +37,21 @@ if (-d $outdir) {
 }
 make_path($outdir);
 
+# Subsampling reads if --subsample is set 
+if ($subsample > 0) {
+	msg("\noooooooo Subsampling $subsample reads");
+	run_cmd("seqtk sample -s100 $R1 $subsample > $outdir/$subsample-reads-R1.fq");
+	run_cmd("seqtk sample -s100 $R2 $subsample > $outdir/$subsample-reads-R2.fq");
+	$R1 = ("$outdir/$subsample-reads-R1.fq");
+	$R2 = ("$outdir/$subsample-reads-R2.fq");
+}
+
 # Trim read from 3' end if base quality below threshold
 msg("\noooooooo Trimming end of reads when base quality is below $basequal");
 run_cmd("trimmomatic PE -threads $cpus -phred33 \Q$R1\E \Q$R2\E $outdir/trimmed-R1.fq $outdir/trimmed-R1-unpaired.fq $outdir/trimmed-R2.fq $outdir/trimmed-R2-unpaired.fq TRAILING:$basequal > /dev/null 2>&1");
 
 # Keep reads that map on reference
-msg("\noooooooo Filtering reads mapping on reference");
+msg("\noooooooo Keeping reads mapping to reference");
 run_cmd("bwa index $refnuc >> $outdir/amplicons.log 2>&1");
 run_cmd("bwa mem -t $cpus $refnuc $outdir/trimmed-R1.fq $outdir/trimmed-R2.fq 1> $outdir/out.sam 2>> $outdir/amplicons.log");
 run_cmd("samtools view -Sb $outdir/out.sam 1> $outdir/out.bam 2>> $outdir/amplicons.log");
@@ -55,8 +64,8 @@ run_cmd("pear -u 0 -v 20 -j $cpus -f $outdir/mapped_reads_R1.fq -r $outdir/mappe
 
 # Count
 msg("\noooooooo Counting barcodes");
-my $head = $subsample > 0 ? " head -n $subsample | " : "";
-run_cmd("cat \Q$outdir/reads.assembled.fastq\E | paste - - - - | $head cut -f 2 | cut -c1-$barlen | sort | uniq -c | sort -nr > \Q$outdir/amplicons.barcodes\E");
+#my $head = $subsample > 0 ? " head -n $subsample | " : "";
+run_cmd("cat \Q$outdir/reads.assembled.fastq\E | paste - - - - | cut -f 2 | cut -c1-$barlen | sort | uniq -c | sort -nr > \Q$outdir/amplicons.barcodes\E");
 
 # Filter out low freq
 my %keep;
@@ -87,7 +96,7 @@ while (my $dna = <RAW>) {
 my $counter=0;
 for my $barcode (keys %keep) {
   print STDERR "\rWriting $barcode ", ++$counter, "/$kept";
-  open my $fh, '>', "$outdir/$barcode.fna";
+  open my $fh, '>', "$outdir/$barcode.mfa";
   my $seqs = $seq{$barcode};
   my $nseq = scalar(@$seqs);
   for my $i (1 .. $nseq) {
@@ -100,12 +109,12 @@ for my $barcode (keys %keep) {
 msg("\n\noooooooo Aligning and creating consensus sequences (please wait)");
 my $nbjobs = $cpus;
 my $clustalo_cpu = 1;
-run_cmd("find $outdir -maxdepth 1 -name '*.fna' | nice parallel --bar --progress -j $nbjobs \'clustalo -i {} --outfmt=fa --threads=$clustalo_cpu | cons -filter -name {/.} -plurality 0.5\' >> \Q$outdir\E/amplicons.nuc\E", 1);
+run_cmd("find $outdir -maxdepth 1 -name '*.mfa' | nice parallel --bar --progress -j $nbjobs \'clustalo -i {} --outfmt=fa --threads=$clustalo_cpu | cons -filter -name {/.} -plurality 0.8\' >> \Q$outdir\E/amplicons.fna\E", 1);
 
 # Cleanup
 unless ($keepfiles) {
   msg("\noooooooo Deleting intermediate files");
-  unlink "$outdir/$_.fna", "$outdir/out.sam", "$outdir/out.bam", "$outdir/mapped.bam", "$outdir/trimmed-R1.fq", "$outdir/trimmed-R2.fq", "$outdir/trimmed-R1-unpaired.fq" , "$outdir/trimmed-R2-unpaired.fq", "$outdir/mapped_reads_R1.fq", "$outdir/mapped_reads_R2.fq" for keys %keep;
+  unlink "$outdir/$_.mfa", "$outdir/out.sam", "$outdir/out.bam", "$outdir/mapped.bam", "$outdir/trimmed-R1.fq", "$outdir/trimmed-R2.fq", "$outdir/trimmed-R1-unpaired.fq" , "$outdir/trimmed-R2-unpaired.fq", "$outdir/mapped_reads_R1.fq", "$outdir/mapped_reads_R2.fq" for keys %keep;
   unlink <$outdir/reads.*>;
 }
 
@@ -149,7 +158,7 @@ sub setOptions {
     {OPT=>"R1=s",  VAR=>\$R1, DEFAULT=>'', DESC=>"Read 1 FASTQ"},
     {OPT=>"R2=s",  VAR=>\$R2, DEFAULT=>'', DESC=>"Read 2 FASTQ"},
     {OPT=>"refnuc=s",  VAR=>\$refnuc, DEFAULT=>'', DESC=>"Reference gene that will be used for premapping filtering (fasta)"},
-    {OPT=>"refprot=s",  VAR=>\$refprot, DEFAULT=>'', DESC=>"Reference protein that will be use for annotating variants (fasta)"},
+    #{OPT=>"refprot=s",  VAR=>\$refprot, DEFAULT=>'', DESC=>"Reference protein that will be use for annotating variants (fasta)"},
     {OPT=>"outdir=s",  VAR=>\$outdir, DEFAULT=>'', DESC=>"Output folder"},
     {OPT=>"force!",  VAR=>\$force, DEFAULT=>0, DESC=>"Force overwite of existing"},
     {OPT=>"barlen=i",  VAR=>\$barlen, DEFAULT=>16, DESC=>"Length of barcode"},
@@ -175,7 +184,7 @@ sub setOptions {
 }
 
 sub usage {
-  print "Usage: $0 [options] --R1 R1.fq.gz --R2 R2.fq.gz --refnuc FASTA --refprot FASTA --outdir DIR --barlen NN\n"; 
+  print "Usage: $0 [options] --R1 R1.fq.gz --R2 R2.fq.gz --refnuc FASTA --outdir DIR --barlen NN\n"; 
   foreach (@Options) {
     printf "  --%-13s %s%s.\n",$_->{OPT},$_->{DESC},
            defined($_->{DEFAULT}) ? " (default '$_->{DEFAULT}')" : "";

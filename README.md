@@ -1,18 +1,18 @@
 # RM-seq: Resistance Mutation SEQuencing
 
-Analysis bioinformatic pipeline for high-throughput identification and quantification of large repertoires of resistance conferring mutations.
-RM-seq is an amplicon-based, deep-sequencing technique using single molecule barcoding. We have adapted this method in order to identify and quantify mutations that confer resistance to a given antibiotic.
+Analysis bioinformatic pipeline for high-throughput assessment of resistance mutations. RM-seq is an amplicon-based, deep-sequencing technique using single molecule barcoding. We have adapted this method to identify and characterise antibiotic resistance mutation.
 
-RM-seq allows to both correct sequenced read errors generated during sequencing and to accurately quantify mutations by correcting PCR amplification bias generated during sequencing library preparation. During the first step of amplicon library preparation, a linear PCR (primer extension) with a primer comprising a tail with degenerated bases (all possible bases) introduce a unique barcode to DNA template molecules. Therefore a barcode is assigned not just to all the molecules from a certain sample (indexing), but to all molecules being amplified and sequenced. RM-seq pipeline use these barcodes to generate an error-corrected consensus sequence of the initial template variant. Counting the barcodes indroduced before exponential amplification by PCR of the template allows to accurately quantify each genetic variants from genomic DNA extracted from complex population of resistant clones (eg. pools of 10,000 resistant colonies selected by an antibiotic in vitro).
+A complete descrition of the RM-seq method is available [here](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z):
 
-A complete descrition of the RM-seq method will be available soon (article submitted)
+If you use this tool please cite:
+Guérillot R, Li L, Baines S, Howden BO, Schultz M, Seemann T et al. Comprehensive antibiotic-linked mutation assessment by Resistance Mutation Sequencing (RM-seq). 2018. doi:10.1101/257915. 
 
 ## Is this the right tool for me?
 
 1. To be able to us this pipeline you need to have sequenced amplicon library with molecular barcodes.
 2. It only supports paired-end FASTQ reads (including .gz compressed fastq files).
 3. It needs paired reads that are overlapping.
-4. It needs a reference fasta sequences of the sequenced gene (DNA and protein sequence).
+4. It needs a reference fasta sequences of the sequenced gene (DNA sequence).
 5. It's written in Python3 and Perl.
 
 ## Installation
@@ -34,7 +34,9 @@ RM-seq has the following package dependencies:
 * pear >= 0.9.10
 * cd-hit >= 4.7
 * trimmomatic >= 0.36
+* seqtk >= 1.3-r106 (only if you subsample reads)
 * python modules: `plumbum`, `Biopython`
+
 
 If you are using the [OSX Brew](http://brew.sh/) or [LinuxBrew](http://linuxbrew.sh/) packaging system:
 
@@ -50,6 +52,7 @@ brew install samtools
 brew install pear
 brew install cd-hit
 brew install trimmomatic
+brew install seqtk
 pip3 install plumbum
 pip3 install biopython
 ```
@@ -85,8 +88,8 @@ Do
     rmseq test
 
 ### To run analysis pipeline, follow the steps in
-
-    rmseq run -h
+   
+	rmseq run -h
     usage: rmseq run [options]
 
     Run the pipeline
@@ -96,8 +99,6 @@ Do
       R2                    Path to read pair 2
       refnuc                Reference gene that will be used for premapping
                             filtering (fasta).
-      refprot               Reference protein that will be use for annotating
-                            variants (fasta).
       outdir                Output directory.
 
     optional arguments:
@@ -109,6 +110,9 @@ Do
       -m MINFREQ, --minfreq MINFREQ
                             Minimum barcode frequency to keep (default 5)
       -c CPUS, --cpus CPUS  Number of CPUs to use (default 72)
+	  -t TRANSLATION, --translation TRANSLATION
+      	                    Manually set the reading frame for translation (use 1,
+                            2 or 3 - use getorf by default)
       -r MINSIZE, --minsize MINSIZE
                             Minimum ORF size in bp used when annotating variants
                             (default 200)
@@ -126,32 +130,37 @@ Do
 
 ## Outputs
 
-RM-seq produces a tap-separated output file called amplicons.effect with the following columns:
+RM-seq produces a tap-separated output file called amplicons.effect where each raw correspond to a consensus amplicon (a genetic variant in the sequenced population):
 
 Column | Example | Description
 -------|---------|------------
-barcode | GACACAACTGAGATTA | The sequence of the barcode
-sample | Rifampicin1 | The output folder name
-aa_mutation | H481N | The annotation of the amino acid change (Histidine residue 481 substituted by Asparagine)
-start |  481 | start coordinate of the mutation 
-end | 481 | end coordinate of the mutation
-orf | VRPPDKNNRFVGLYCTLV... | the protein sequence of the consensus sequence
-dna | GGTTAGACCACCCGATAA... | The dna sequence of the consensus sequence
+barcode | GACACAACTGAGATTA | sequence of the barcode
+sample | Rifampicin1 | output folder name
+prot_mutation | H481N | annotation of the amino acid change (Histidine residue 481 substituted by Asparagine)
+prot_start |  481 | start coordinate of the mutation 
+prot_end | 481 | end coordinate of the mutation
+nuc_mutation | C1443G | annotation of the nucleotide change
+nuc_start | 1443 | start coordinate of the nucleotide change
+nuc_end | 1443 | end coordinate of the nucleotide change
+prot | VRPPDKNNRFVGLYCTLV... | protein sequence of the consensus sequence
+dna | GGTTAGACCACCCGATAA... | dna sequence of the consensus sequence
+reference_barcode | CTGACACGTCCTGAAG | barcode of the identical consesnsus amplicon used for annotation
 
 The other files produced by RM-seq are:
 
 File name | Description
 ----------|------------
-amplicons.nuc | Multifasta file containing all the consensus nucleotide sequence (header of sequence is the barcode)
-amplicons.orf | Multifasta file containing all the consensus protein sequence (header of sequence is the barcode)
 amplicons.barcodes | Table with the count of each barcode sequence
-amplicons.cdhit | Multifasta file containing all the unique consensus nucleotide sequence (header of sequence is the barcode)
+amplicons.fna | Multifasta file containing all the consensus nucleotide sequence (header of sequence is the barcode)
+amplicons.faa | Multifasta file containing all the consensus protein sequence (header of sequence is the barcode)
+amplicons.fna.cdhit | Multifasta file containing all the unique consensus nucleotide sequence (header of sequence is the barcode)
+amplicons.faa.cdhit | Multifasta file containing all the unique consensus amino acid sequence (header of sequence is the barcode)
 
 
 ## Issues
 
 Please report problems to the [Issues Page](https://github.com/rguerillot/RM-seq/issues).
 
-## Author
+## Authors
 
 Romain Guerillot | Torsten Seemann | Mark B Schultz (github: schultzm)

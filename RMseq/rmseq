@@ -46,44 +46,54 @@ SUBPARSER_RUN = SUBPARSERS.add_parser('run', help='Run the pipeline.',
 
 SUBPARSER_RUN.add_argument('-d', '--debug_on', help='Switch on debug mode.',
                            action='store_true', default=False, required=False)
+
 SUBPARSER_RUN.add_argument('R1', help='Path to read pair 1')
+
 SUBPARSER_RUN.add_argument('R2', help='Path to read pair 2')
+
 SUBPARSER_RUN.add_argument('refnuc',
-                           help='Reference gene that will be used for ' +\
-                                'premapping filtering (fasta).')
-SUBPARSER_RUN.add_argument('refprot',
-                           help='Reference protein that will be use for ' +\
-                                'annotating variants (fasta).')
+                           help='Reference sequence that will be used for ' +\
+                                'premapping filtering and mutation annotation (fasta).')
+
 SUBPARSER_RUN.add_argument('outdir', help='Output directory.',)
+
 SUBPARSER_RUN.add_argument('-f', '--force', help='Force overwite of existing.',
                            action='store_true', default=False, required=False)
+
 SUBPARSER_RUN.add_argument('-b', '--barlen',
                            help='Length of barcode (default 16)',
                            default=16, required=False)
+
 SUBPARSER_RUN.add_argument('-m', '--minfreq',
                            help='Minimum barcode frequency to keep ' +\
                                 '(default 5)',
                            default=5, required=False)
+
 SUBPARSER_RUN.add_argument('-c', '--cpus',
                            help='Number of CPUs to use (default ' +\
                                 str(cpu_count())+')',
                            default=cpu_count(), required=False)
+
 SUBPARSER_RUN.add_argument('-t', '--translation',
                            help='Manually set the reading frame ' +\
-                           'for translation (use 1, 2 or 3 - use getorf by defaut)', 
+                           'for translation (use 1, 2 or 3 - use getorf by default)', 
                            default="getorf", required=False)
+
 SUBPARSER_RUN.add_argument('-r', '--minsize',
                            help='Minimum ORF size in bp used when ' +\
                                 'annotating variants (default 200)',
                            default=200, required=False)
+
 SUBPARSER_RUN.add_argument('-w', '--wsize',
                            help='Word-size option to pass to diffseq for ' +\
                                 'comparison with reference sequence ' +\
                                 '(default 5)',
                            default=5, required=False)
+
 SUBPARSER_RUN.add_argument('-s', '--subsample',
                            help='Only examine this many reads.',
                            default=None, type=int, required=False)
+
 SUBPARSER_RUN.add_argument('-k', '--keepfiles',
                            help='Keep the intermediate files.  Default is ' +\
                                 'to remove intermediate files',
@@ -120,7 +130,6 @@ def version():
     vrsn = '\nRM-seq version: ' + __version__ +\
               '\nVersion date: ' + __version_date__ +\
               '\nAuthors: '+ __author__ +\
-              '\nCorresponding author email: '+ __author_email__ +\
               '\nGithub: ' + __github_username__ +\
               '\nDownload url: ' + __download_url__ +'\n'
     return vrsn
@@ -164,19 +173,17 @@ def main():
     else:
         force = ''
     if ARGS.subsample and ARGS.subsample > 0:
-        subsample = ' --subsample '+str(ARGS.subsample)
+        subsample = ' --subsample ' + str(ARGS.subsample)
     else:
         subsample = ''
 
-    cmd = RMSEQ_PERL+debug+keepfiles+force +\
+    cmd = RMSEQ_PERL+debug+keepfiles+force+\
           ' --R1 ' +\
           os.path.abspath(ARGS.R1) +\
           ' --R2 ' +\
           os.path.abspath(ARGS.R2) +\
           ' --refnuc ' +\
           os.path.abspath(ARGS.refnuc) +\
-          ' --refprot ' +\
-          os.path.abspath(ARGS.refprot) +\
           ' --outdir ' +\
           os.path.abspath(ARGS.outdir) +\
           ' --barlen ' +\
@@ -190,7 +197,7 @@ def main():
           ' --wsize ' +\
           str(ARGS.wsize) +\
           subsample
-
+    print("oooooooo Running command: " + str(cmd))
     os.system(cmd)
 
     cmd = AMPLICON_EFFECT +\
@@ -198,8 +205,8 @@ def main():
           ' -t '+str(ARGS.translation) +\
           ' -f '+str(ARGS.minsize) +\
           ' -w '+str(ARGS.wsize) +\
-          ' '+os.path.join(os.path.abspath(ARGS.outdir), 'amplicons.nuc') +\
-          ' '+os.path.abspath(ARGS.refprot) +\
+          ' '+os.path.join(os.path.abspath(ARGS.outdir), 'amplicons.fna') +\
+          ' '+os.path.abspath(ARGS.refnuc) +\
           ' '+os.path.abspath(ARGS.outdir)
     os.system(cmd)
 
@@ -214,7 +221,6 @@ def test(outdir):
     cmd = RMSEQ_PERL+' --R1 '+os.path.join(TEST_DATA, 'R1.fq') +\
           ' --R2 '+os.path.join(TEST_DATA, 'R2.fq') +\
           ' --refnuc '+os.path.join(TEST_DATA, 'rpob.fna') +\
-          ' --refprot '+os.path.join(TEST_DATA, 'RpoB.faa') +\
           ' --outdir '+os.path.abspath(outdir)
     print('oooooooo Will now run test using the following command:', '\n', cmd)
     os.system(cmd)
@@ -223,7 +229,7 @@ def test(outdir):
       ' -f 200' +\
       ' -w 5' +\
       ' '+os.path.join(os.path.abspath(outdir), 'amplicons.nuc') +\
-      ' '+os.path.join(TEST_DATA, 'RpoB.faa') +\
+      ' '+os.path.join(TEST_DATA, 'rpob.fna') +\
       ' '+os.path.abspath(outdir)
     os.system(cmd)
     if os.path.exists(os.path.join(os.path.abspath(outdir),
@@ -245,7 +251,9 @@ def finish_message():
     '''
     Print a completion message.
     '''
-    sys.stderr.write('\nDone. Thankyou for you using ' + version() +
+    sys.stderr.write('\nDone. Thank you for you using ' + version() +
+					 '\nIf you like this tool please cite our paper: ' + 
+                     '\n\"Comprehensive antibiotic-linked mutation assessment by Resistance Mutation Sequencing (RM-seq).Genome med. 2018. doi:10.1101/257915.\"'    
                      '\nTotal runtime (HRS:MIN:SECS):' +
                      str(datetime.now() - STARTTIME) + '\n💊\n')
 

@@ -2,8 +2,8 @@
 __name__            = 'rmseq'
 __test_data__       = 'test_data'
 __parent_dir__      = 'RMseq'
-__version__         = '0.0.51b'
-__version_date__    = 'Tue 3 October, 2017'
+__version__         = '0.0.53b'
+__version_date__    = 'Tue 18 September, 2018'
 __description__     = 'RM-seq is a bioinformatics tool for for ' +\
                        'assessing resistance mutations from PE short-reads.'
 __author__          = 'Romain Guerillot, ' +\
