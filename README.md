@@ -2,10 +2,9 @@
 
 Analysis bioinformatic pipeline for high-throughput assessment of resistance mutations. RM-seq is an amplicon-based, deep-sequencing technique using single molecule barcoding. We have adapted this method to identify and characterise antibiotic resistance mutation.
 
-A complete descrition of the RM-seq method is available [here](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z):
+The complete description of the RM-seq workflow is available [here](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z)
 
-If you use this tool please cite:
-Guérillot R, Li L, Baines S, Howden BO, Schultz M, Seemann T et al. Comprehensive antibiotic-linked mutation assessment by Resistance Mutation Sequencing (RM-seq). 2018. doi:10.1101/257915. 
+Guérillot R et al. Comprehensive antibiotic-linked mutation assessment by Resistance Mutation Sequencing (RM-seq). 2018. doi:10.1101/257915. 
 
 ## Is this the right tool for me?
 
