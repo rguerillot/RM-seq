@@ -4,8 +4,6 @@ Analysis bioinformatic pipeline for high-throughput assessment of resistance mut
 
 The complete description of the RM-seq workflow is available [here](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z)
 
-Guérillot R et al. Comprehensive antibiotic-linked mutation assessment by Resistance Mutation Sequencing (RM-seq). 2018. doi:10.1101/257915. 
-
 ## Is this the right tool for me?
 
 1. To be able to us this pipeline you need to have sequenced amplicon library with molecular barcodes.
@@ -163,3 +161,8 @@ Please report problems to the [Issues Page](https://github.com/rguerillot/RM-seq
 ## Authors
 
 Romain Guerillot (github: rguerillot) | Torsten Seemann (github: tseemann) | Mark B Schultz (github: schultzm)
+
+## Citation
+
+If you use this tool please cite:
+[Guérillot R et al. Comprehensive antibiotic-linked mutation assessment by Resistance Mutation Sequencing (RM-seq). 2018. doi:10.1101/257915.](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z)
