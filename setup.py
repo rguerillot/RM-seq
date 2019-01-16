@@ -4,10 +4,7 @@ import RMseq
 import os
 
 
-LONG_DESCRIPTION = 'Given a set of paired-end reads, a reference sequence ' +\
-                   'and a reference protein (both in .fasta format), map ' +\
-                   'the reads to the reference and determine the pool ' +\
-                   'of mutated alleles in the short reads.'
+LONG_DESCRIPTION = 'RM-seq is a bioinformatics tool for assessing resistance mutations from complex or pooled resistant bacterial population using barcoded amplicons sequencing data'
 
 if os.path.exists('README'):
     LONG_DESCRIPTION = open('README').read()

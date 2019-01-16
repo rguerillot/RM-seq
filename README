@@ -6,13 +6,8 @@ resistance mutations. RM-seq is an amplicon-based, deep-sequencing
 technique using single molecule barcoding. We have adapted this method
 to identify and characterise antibiotic resistance mutation.
 
-A complete descrition of the RM-seq method is available
-`here <https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z>`__:
-
-If you use this tool please cite: Guérillot R, Li L, Baines S, Howden
-BO, Schultz M, Seemann T et al. Comprehensive antibiotic-linked mutation
-assessment by Resistance Mutation Sequencing (RM-seq). 2018.
-doi:10.1101/257915.
+The complete description of the RM-seq workflow is available
+`here <https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z>`__
 
 Is this the right tool for me?
 ------------------------------
@@ -119,34 +114,39 @@ To run analysis pipeline, follow the steps in
     Run the pipeline
 
     positional arguments:
-      R1                    Path to read pair 1
-      R2                    Path to read pair 2
-      refnuc                Reference gene that will be used for premapping
-                            filtering (fasta).
-      outdir                Output directory.
+       R1                    Path to read pair 1
+       R2                    Path to read pair 2
+       refnuc                Reference sequence that will be used for premapping
+                        filtering and mutation annotation (fasta).
+       outdir                Output directory.
 
     optional arguments:
-      -h, --help            show this help message and exit
-      -d, --debug_on        Switch on debug mode.
-      -f, --force           Force overwite of existing.
-      -b BARLEN, --barlen BARLEN
-                            Length of barcode (default 16)
-      -m MINFREQ, --minfreq MINFREQ
-                            Minimum barcode frequency to keep (default 5)
-      -c CPUS, --cpus CPUS  Number of CPUs to use (default 72)
-      -t TRANSLATION, --translation TRANSLATION
-                            Manually set the reading frame for translation (use 1,
-                            2 or 3 - use getorf by default)
-      -r MINSIZE, --minsize MINSIZE
-                            Minimum ORF size in bp used when annotating variants
-                            (default 200)
-      -w WSIZE, --wsize WSIZE
-                            Word-size option to pass to diffseq for comparison
-                            with reference sequence (default 5)
-      -s SUBSAMPLE, --subsample SUBSAMPLE
-                            Only examine this many reads.
-      -k, --keepfiles       Keep the intermediate files. Default is to remove
-                            intermediate files
+       -h, --help            show this help message and exit
+       -d, --debug_on        Switch on debug mode.
+       -f, --force           Force overwite of existing.
+       -b BARLEN, --barlen BARLEN
+                             Length of barcode (default 16)
+       -m MINFREQ, --minfreq MINFREQ
+                             Minimum barcode frequency to keep (default 5)
+       -q BASEQUAL, --basequal BASEQUAL
+                             Minimum base quality threshold used for trimming the
+                             end of reads (trimmomatic TRAILING argument) (default
+                             30)
+       -c CPUS, --cpus CPUS  Number of CPUs to use (default 72)
+       -t TRANSLATION, --translation TRANSLATION
+                             Manually set the reading frame for translation (use 1,
+                             2 or 3 - use getorf by default)
+       -r MINSIZE, --minsize MINSIZE
+                             Minimum ORF size in bp used when annotating variants
+                             (default 200)
+       -w WSIZE, --wsize WSIZE
+                             Word-size option to pass to diffseq for comparison
+                             with reference sequence (default 5)
+       -s SUBSAMPLE, --subsample SUBSAMPLE
+                             Only examine this many reads.
+       -k, --keepfiles       Keep the intermediate files (default remove)
+       -n, --noaln           Skip reads alignment when generating consensus (to use
+                             for indel quantification only) (default align)
 
 To check the version
 ~~~~~~~~~~~~~~~~~~~~
@@ -215,3 +215,11 @@ Authors
 
 Romain Guerillot (github: rguerillot) \| Torsten Seemann (github:
 tseemann) \| Mark B Schultz (github: schultzm)
+
+Citation
+--------
+
+If you use this tool please cite: `Guérillot R et al. Comprehensive
+antibiotic-linked mutation assessment by Resistance Mutation Sequencing
+(RM-seq). 2018.
+doi:10.1101/257915. <https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-018-0572-z>`__

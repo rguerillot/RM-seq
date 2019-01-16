@@ -16,7 +16,7 @@ sub natatime ($@)
 }
 
 
-my(@Options, $debug, $R1, $R2, $barlen, $outdir, $basequal, $refnuc, $minfreq, $force, $cpus, $minsize, $wsize, $subsample, $keepfiles);
+my(@Options, $debug, $R1, $R2, $barlen, $outdir, $basequal, $refnuc, $minfreq, $force, $cpus, $minsize, $wsize, $subsample, $keepfiles, $noaln);
 setOptions();
 
 # Options
@@ -52,8 +52,10 @@ run_cmd("trimmomatic PE -threads $cpus -phred33 \Q$R1\E \Q$R2\E $outdir/trimmed-
 
 # Keep reads that map on reference
 msg("\noooooooo Keeping reads mapping to reference");
-run_cmd("bwa index $refnuc >> $outdir/amplicons.log 2>&1");
-run_cmd("bwa mem -t $cpus $refnuc $outdir/trimmed-R1.fq $outdir/trimmed-R2.fq 1> $outdir/out.sam 2>> $outdir/amplicons.log");
+run_cmd("mkdir $outdir/reference");
+run_cmd("cp $refnuc $outdir/reference/ref.fa");
+run_cmd("bwa index $outdir/reference/ref.fa >> $outdir/amplicons.log 2>&1");
+run_cmd("bwa mem -t $cpus $outdir/reference/ref.fa $outdir/trimmed-R1.fq $outdir/trimmed-R2.fq 1> $outdir/out.sam 2>> $outdir/amplicons.log");
 run_cmd("samtools view -Sb $outdir/out.sam 1> $outdir/out.bam 2>> $outdir/amplicons.log");
 run_cmd("samtools view -b -f 0x2 $outdir/out.bam 1> $outdir/mapped.bam 2>> $outdir/amplicons.log");
 run_cmd("bamToFastq -i $outdir/mapped.bam -fq $outdir/mapped_reads_R1.fq -fq2 $outdir/mapped_reads_R2.fq >> $outdir/amplicons.log 2>&1");
@@ -105,11 +107,17 @@ for my $barcode (keys %keep) {
   close $fh;
 }
 
-# Alignment and consensus
-msg("\n\noooooooo Aligning and creating consensus sequences (please wait)");
+# Create consensus
+msg("\n\noooooooo Creating consensus sequences (please wait)");
 my $nbjobs = $cpus;
 my $clustalo_cpu = 1;
-run_cmd("find $outdir -maxdepth 1 -name '*.mfa' | nice parallel --bar --progress -j $nbjobs \'clustalo -i {} --outfmt=fa --threads=$clustalo_cpu | cons -filter -name {/.} -plurality 0.8\' >> \Q$outdir\E/amplicons.fna\E", 1);
+if ($noaln != 0) {
+	#skip clustalo alignment and run conseq only
+	run_cmd("find $outdir -maxdepth 1 -name '*.mfa' | nice parallel --bar --progress -j $nbjobs \'cons -sequence {} -filter -name {/.} -plurality 0.8\' >> \Q$outdir\E/amplicons.fna\E", 1);
+} else {
+	#run clustalo alignment + conseq	
+	run_cmd("find $outdir -maxdepth 1 -name '*.mfa' | nice parallel --bar --progress -j $nbjobs \'clustalo -i {} --outfmt=fa --threads=$clustalo_cpu | cons -filter -name {/.} -plurality 0.8\' >> \Q$outdir\E/amplicons.fna\E", 1);
+}
 
 # Cleanup
 unless ($keepfiles) {
@@ -158,7 +166,6 @@ sub setOptions {
     {OPT=>"R1=s",  VAR=>\$R1, DEFAULT=>'', DESC=>"Read 1 FASTQ"},
     {OPT=>"R2=s",  VAR=>\$R2, DEFAULT=>'', DESC=>"Read 2 FASTQ"},
     {OPT=>"refnuc=s",  VAR=>\$refnuc, DEFAULT=>'', DESC=>"Reference gene that will be used for premapping filtering (fasta)"},
-    #{OPT=>"refprot=s",  VAR=>\$refprot, DEFAULT=>'', DESC=>"Reference protein that will be use for annotating variants (fasta)"},
     {OPT=>"outdir=s",  VAR=>\$outdir, DEFAULT=>'', DESC=>"Output folder"},
     {OPT=>"force!",  VAR=>\$force, DEFAULT=>0, DESC=>"Force overwite of existing"},
     {OPT=>"barlen=i",  VAR=>\$barlen, DEFAULT=>16, DESC=>"Length of barcode"},
@@ -169,6 +176,7 @@ sub setOptions {
     {OPT=>"wsize=i",  VAR=>\$wsize, DEFAULT=>5, DESC=>"Word-size option to pass to diffseq for comparison with reference sequence"},
     {OPT=>"subsample=i",  VAR=>\$subsample, DEFAULT=>0, DESC=>"Only examine this many reads"},
     {OPT=>"keepfiles!",  VAR=>\$keepfiles, DEFAULT=>0, DESC=>"Do not delete intermediate files"},
+	{OPT=>"noaln!",  VAR=>\$noaln, DEFAULT=>0, DESC=>"Skip reads alignment when generating consensus (to use for indel quantification only)"},
   );
 
   (!@ARGV) && (usage());

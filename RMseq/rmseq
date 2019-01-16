@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/linuxbrew/.linuxbrew/opt/python/bin/python3.7
 
 '''
     Uses python3.
@@ -69,6 +69,11 @@ SUBPARSER_RUN.add_argument('-m', '--minfreq',
                                 '(default 5)',
                            default=5, required=False)
 
+SUBPARSER_RUN.add_argument('-q', '--basequal',                                                                                                                                                                                        
+                           help='Minimum base quality threshold used for trimming the end of reads (trimmomatic TRAILING argument) ' +\
+								'(default 30)',
+                           default=30, required=False)
+
 SUBPARSER_RUN.add_argument('-c', '--cpus',
                            help='Number of CPUs to use (default ' +\
                                 str(cpu_count())+')',
@@ -95,8 +100,12 @@ SUBPARSER_RUN.add_argument('-s', '--subsample',
                            default=None, type=int, required=False)
 
 SUBPARSER_RUN.add_argument('-k', '--keepfiles',
-                           help='Keep the intermediate files.  Default is ' +\
-                                'to remove intermediate files',
+                           help='Keep the intermediate files (default remove)',
+                           action='store_true', default=False, required=False)
+
+SUBPARSER_RUN.add_argument('-n', '--noaln',                                                                                                                   
+                           help='Skip reads alignment when generating consensus ' +\
+								'(to use for indel quantification only) (default align)',                                                                                                   
                            action='store_true', default=False, required=False)
 
 #---------------------------- version ------------------------------------
@@ -160,24 +169,33 @@ def main():
     '''
     This script is a python wrapper to launch the RM-seq pipeline.
     '''
+
     if ARGS.debug_on:
         debug = ' --debug'
     else:
         debug = ''
+
     if ARGS.keepfiles:
         keepfiles = ' --keepfiles'
     else:
         keepfiles = ''
+
     if ARGS.force:
         force = ' --force'
     else:
         force = ''
+
     if ARGS.subsample and ARGS.subsample > 0:
         subsample = ' --subsample ' + str(ARGS.subsample)
     else:
-        subsample = ''
+	    subsample = ''
 
-    cmd = RMSEQ_PERL+debug+keepfiles+force+\
+    if ARGS.noaln:
+        noaln = ' --noaln'
+    else:
+        noaln = ''
+
+    cmd = RMSEQ_PERL+debug+keepfiles+force+subsample+noaln +\
           ' --R1 ' +\
           os.path.abspath(ARGS.R1) +\
           ' --R2 ' +\
@@ -190,13 +208,15 @@ def main():
           str(ARGS.barlen) +\
           ' --minfreq ' +\
           str(ARGS.minfreq) +\
+          ' --basequal ' +\
+          str(ARGS.basequal) +\
           ' --cpus ' +\
           str(ARGS.cpus) +\
           ' --minsize ' +\
           str(ARGS.minsize) +\
           ' --wsize ' +\
-          str(ARGS.wsize) +\
-          subsample
+          str(ARGS.wsize)
+
     print("oooooooo Running command: " + str(cmd))
     os.system(cmd)
 
@@ -237,8 +257,6 @@ def test(outdir):
     os.path.getsize(os.path.join(os.path.abspath(outdir),
                                    'amplicons.effect')) > 0:
         print('\noooooooo Test success.\nResults in '+os.path.abspath(outdir)+'\n')
-
-
 
 def check_exists(cmd):
     '''

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/linuxbrew/.linuxbrew/opt/python/bin/python3.7
 
 '''
     Uses python3.
@@ -57,7 +57,6 @@ def get_aanuc_from_position(sstart, send, ref_file):
     else:
         return str(ref.seq[int(sstart)-1:int(send)])
         
-
 def parse_diffseq_output(diffseq_output, ref_file):
     if 'No hits in output report file' in diffseq_output:
         return(["NA", "NA", "0", "0","0"])
@@ -165,7 +164,8 @@ def main():
         os.makedirs(outfolder)
 
     # write reference files
-    os.makedirs(outfolder + "/reference")
+    if not os.path.exists(outfolder + "/reference"):
+        os.makedirs(outfolder + "/reference")
     reference_nuc_file = outfolder + "/reference/nuc.fa"
     reference_prot_file = outfolder + "/reference/prot.fa"
     ref_nuc = SeqIO.read(os.path.abspath(args.ref), "fasta")

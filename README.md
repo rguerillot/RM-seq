@@ -86,40 +86,50 @@ Do
 
 ### To run analysis pipeline, follow the steps in
    
-	rmseq run -h
+    
+
+
+
+
+    rmseq run -h
     usage: rmseq run [options]
 
     Run the pipeline
 
     positional arguments:
-      R1                    Path to read pair 1
-      R2                    Path to read pair 2
-      refnuc                Reference gene that will be used for premapping
-                            filtering (fasta).
-      outdir                Output directory.
+       R1                    Path to read pair 1
+       R2                    Path to read pair 2
+       refnuc                Reference sequence that will be used for premapping
+                        filtering and mutation annotation (fasta).
+       outdir                Output directory.
 
     optional arguments:
-      -h, --help            show this help message and exit
-      -d, --debug_on        Switch on debug mode.
-      -f, --force           Force overwite of existing.
-      -b BARLEN, --barlen BARLEN
-                            Length of barcode (default 16)
-      -m MINFREQ, --minfreq MINFREQ
-                            Minimum barcode frequency to keep (default 5)
-      -c CPUS, --cpus CPUS  Number of CPUs to use (default 72)
-	  -t TRANSLATION, --translation TRANSLATION
-      	                    Manually set the reading frame for translation (use 1,
-                            2 or 3 - use getorf by default)
-      -r MINSIZE, --minsize MINSIZE
-                            Minimum ORF size in bp used when annotating variants
-                            (default 200)
-      -w WSIZE, --wsize WSIZE
-                            Word-size option to pass to diffseq for comparison
-                            with reference sequence (default 5)
-      -s SUBSAMPLE, --subsample SUBSAMPLE
-                            Only examine this many reads.
-      -k, --keepfiles       Keep the intermediate files. Default is to remove
-                            intermediate files
+       -h, --help            show this help message and exit
+       -d, --debug_on        Switch on debug mode.
+       -f, --force           Force overwite of existing.
+       -b BARLEN, --barlen BARLEN
+                             Length of barcode (default 16)
+       -m MINFREQ, --minfreq MINFREQ
+                             Minimum barcode frequency to keep (default 5)
+       -q BASEQUAL, --basequal BASEQUAL
+                             Minimum base quality threshold used for trimming the
+                             end of reads (trimmomatic TRAILING argument) (default
+                             30)
+       -c CPUS, --cpus CPUS  Number of CPUs to use (default 72)
+       -t TRANSLATION, --translation TRANSLATION
+                             Manually set the reading frame for translation (use 1,
+                             2 or 3 - use getorf by default)
+       -r MINSIZE, --minsize MINSIZE
+                             Minimum ORF size in bp used when annotating variants
+                             (default 200)
+       -w WSIZE, --wsize WSIZE
+                             Word-size option to pass to diffseq for comparison
+                             with reference sequence (default 5)
+       -s SUBSAMPLE, --subsample SUBSAMPLE
+                             Only examine this many reads.
+       -k, --keepfiles       Keep the intermediate files (default remove)
+       -n, --noaln           Skip reads alignment when generating consensus (to use
+                             for indel quantification only) (default align)
 
 ### To check the version
 
